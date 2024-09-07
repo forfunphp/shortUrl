@@ -32,7 +32,6 @@ func reduceURL() string {
 func Handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
-
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Не спарсил тело запроса", http.StatusBadRequest)
