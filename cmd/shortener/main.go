@@ -1,30 +1,34 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io"
 	"log"
-	"math/rand"
+	"math/big"
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type URLPair struct {
-	Url      string
+	URL      *url.URL
 	ShortURL string
 }
 
 var urlMap map[string]URLPair
 
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 func reduceURL() string {
-	rand.Seed(time.Now().UnixNano())
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 	var shortURL string
 	for i := 0; i < 8; i++ {
-		randomIndex := rand.Intn(len(charset))
-		shortURL += string(charset[randomIndex])
+		randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			panic(err)
+		}
+		shortURL += string(charset[randomIndex.Int64()])
 	}
 	return shortURL
 }
@@ -38,10 +42,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		URL := string(body)
+		parsedURL, err := url.Parse(URL)
+		if err != nil {
+			http.Error(w, "Не спарсил URL", http.StatusBadRequest)
+		}
 		fmt.Println(body)
-		fmt.Println(URL)
+		fmt.Println(parsedURL)
 		shortURL := reduceURL()
-		urlMap[shortURL] = URLPair{URL, shortURL}
+		urlMap[shortURL] = URLPair{parsedURL, shortURL}
 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/plain")
@@ -60,11 +68,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Нет урла", http.StatusBadRequest)
 			return
 		}
-		fmt.Println(urlPair.Url)
-		w.Header().Set("Location", urlPair.Url)
+		fmt.Println(urlPair.URL)
+		w.Header().Set("Location", urlPair.URL.String())
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
-
 }
 
 func main() {
