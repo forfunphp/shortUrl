@@ -12,7 +12,7 @@ import (
 )
 
 type URLPair struct {
-	Url      *url.URL
+	URL      *url.URL
 	ShortURL string
 }
 
@@ -68,8 +68,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Нет урла", http.StatusBadRequest)
 			return
 		}
-		fmt.Println(urlPair.Url)
-		w.Header().Set("Location", urlPair.Url.String())
+		fmt.Println(urlPair.URL)
+		w.Header().Set("Location", urlPair.URL.String())
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 
