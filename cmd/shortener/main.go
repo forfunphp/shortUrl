@@ -12,7 +12,7 @@ import (
 )
 
 type URLPair struct {
-	Url      string
+	Url      *url.URL
 	ShortURL string
 }
 
