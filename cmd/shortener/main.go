@@ -72,7 +72,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", urlPair.URL.String())
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
-
 }
 
 func main() {
