@@ -69,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Println(urlPair.Url)
-		w.Header().Set("Location", urlPair.Url)
+		w.Header().Set("Location", urlPair.Url.String())
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 
