@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -29,16 +30,17 @@ func reduceURL() string {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	body := ""
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		for k, v := range r.Form {
-			body += fmt.Sprintf("%s: %v\r\n", k, v)
-		}
 
+	if r.Method == http.MethodPost {
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Не спарсил тело запроса", http.StatusBadRequest)
+			return
+		}
 		URL := string(body)
+		fmt.Println(body)
+		fmt.Println(URL)
 		shortURL := reduceURL()
 		urlMap[shortURL] = URLPair{URL, shortURL}
 
@@ -53,10 +55,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		shortURL := strings.Split(parts[1], "favicon.ico")
 
 		urlPair, ok := urlMap[shortURL[0]]
+		fmt.Println("Редирект")
+		fmt.Println(urlPair)
 		if !ok {
 			http.Error(w, "Нет урла", http.StatusBadRequest)
 			return
 		}
+		fmt.Println(urlPair.Url)
 		w.Header().Set("Location", urlPair.Url)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
