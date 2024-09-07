@@ -42,7 +42,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(URL)
 		shortURL := reduceURL()
 		urlMap[shortURL] = URLPair{URL, shortURL}
-
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "http://localhost:8080/%s", shortURL)
