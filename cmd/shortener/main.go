@@ -44,7 +44,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		URL := string(body)
 		parsedURL, err := url.Parse(URL)
 		if err != nil {
-			// обработка ошибки при парсинге URL
+			http.Error(w, "Не спарсил URL", http.StatusBadRequest)
 		}
 		fmt.Println(body)
 		fmt.Println(parsedURL)
