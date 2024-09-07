@@ -46,7 +46,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "http://localhost:8080/%s\n", shortURL)
-
 	}
 
 	if r.Method == http.MethodGet {
