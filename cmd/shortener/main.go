@@ -29,7 +29,6 @@ func reduceURL() string {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-
 	body := ""
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
