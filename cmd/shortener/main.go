@@ -42,10 +42,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		URL := string(body)
+		parsedURL, err := url.Parse(URL)
+		if err != nil {
+			// обработка ошибки при парсинге URL
+		}
 		fmt.Println(body)
-		fmt.Println(URL)
+		fmt.Println(parsedURL)
 		shortURL := reduceURL()
-		urlMap[shortURL] = URLPair{URL, shortURL}
+		urlMap[shortURL] = URLPair{parsedURL, shortURL}
 
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/plain")
