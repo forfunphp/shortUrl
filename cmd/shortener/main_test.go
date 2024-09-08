@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/stretchr/testify"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strings"
