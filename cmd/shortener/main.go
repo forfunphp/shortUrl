@@ -16,7 +16,7 @@ type URLPair struct {
 	ShortURL string
 }
 
-var urlMap map[string]URLPair
+var urlMap = make(map[string]URLPair)
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
@@ -36,6 +36,7 @@ func reduceURL() string {
 func Handler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
+
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Не спарсил тело запроса", http.StatusBadRequest)
@@ -46,36 +47,30 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Не спарсил URL", http.StatusBadRequest)
 		}
-		fmt.Println(body)
-		fmt.Println(parsedURL)
+
 		shortURL := reduceURL()
 		urlMap[shortURL] = URLPair{parsedURL, shortURL}
-
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "http://localhost:8080/%s", shortURL)
 	}
 
 	if r.Method == http.MethodGet {
-		u, _ := url.Parse(r.URL.Path)
-		parts := strings.Split(u.Path, "/")
-		shortURL := strings.Split(parts[1], "favicon.ico")
+		u, _ := url.Parse(r.URL.String())
+		shortURL := strings.Split(u.Path, "/")[1]
+		urlPair, ok := urlMap[shortURL]
 
-		urlPair, ok := urlMap[shortURL[0]]
-		fmt.Println("Редирект")
-		fmt.Println(urlPair)
 		if !ok {
 			http.Error(w, "Нет урла", http.StatusBadRequest)
 			return
 		}
-		fmt.Println(urlPair.URL)
+
 		w.Header().Set("Location", urlPair.URL.String())
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 }
 
 func main() {
-	urlMap = make(map[string]URLPair)
 	http.HandleFunc("/", Handler)
 	fmt.Println("Сервер запущен на http://localhost:8080/")
 	log.Fatal(http.ListenAndServe(":8080", nil))

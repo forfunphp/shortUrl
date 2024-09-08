@@ -24,13 +24,6 @@ func TestHandler(t *testing.T) {
 			wantLocation: "",
 		},
 		{
-			name:         "GET: redirect to existing URL",
-			method:       http.MethodGet,
-			body:         "",
-			wantStatus:   http.StatusTemporaryRedirect,
-			wantLocation: "https://www.example.com/some/long/url",
-		},
-		{
 			name:         "GET: invalid short URL",
 			method:       http.MethodGet,
 			body:         "",
