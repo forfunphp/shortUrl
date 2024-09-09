@@ -61,7 +61,7 @@ func reduceURLHandler(c *gin.Context) {
 	shortURL := reduceURL()
 	urlMap[shortURL] = URLPair{parsedURL, shortURL}
 
-	c.JSON(http.StatusCreated, fmt.Sprintf("http://localhost:8080/%s", shortURL))
+	c.Data(http.StatusCreated, "text/plain", []byte("http://localhost:8080/"+shortURL))
 }
 
 func redirectHandler(c *gin.Context) {
