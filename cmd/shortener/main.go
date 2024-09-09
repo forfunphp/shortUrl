@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
@@ -43,12 +44,14 @@ func main() {
 }
 
 func reduceURLHandler(c *gin.Context) {
-	var URL string
-	if err := c.ShouldBindJSON(&URL); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил тело запроса"})
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 		return
 	}
 
+	URL := string(body)
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил URL"})
