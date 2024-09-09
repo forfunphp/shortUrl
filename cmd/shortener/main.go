@@ -68,9 +68,6 @@ func redirectHandler(c *gin.Context) {
 	shortURL := c.Param("shortURL")
 	urlPair, ok := urlMap[shortURL]
 
-	fmt.Println("suda idi")
-	fmt.Println(urlPair.URL)
-
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Нет урла"})
 		return
