@@ -1,14 +1,18 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestHandler(t *testing.T) {
+func TestReduceURLHandler(t *testing.T) {
 	tests := []struct {
 		name         string
 		method       string
@@ -23,19 +27,62 @@ func TestHandler(t *testing.T) {
 			wantStatus:   http.StatusCreated,
 			wantLocation: "",
 		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			router := gin.Default()
+			router.POST("/", reduceURLHandler)
+
+			req := httptest.NewRequest(tt.method, "/", strings.NewReader(tt.body))
+			rr := httptest.NewRecorder()
+
+			router.ServeHTTP(rr, req)
+
+			assert.Equal(t, tt.wantStatus, rr.Code, "Handler() returned wrong status code")
+
+			if tt.wantLocation != "" {
+				assert.Equal(t, tt.wantLocation, rr.Header().Get("Location"), "Handler() returned wrong Location header")
+			}
+		})
+	}
+}
+
+func TestRedirectHandler(t *testing.T) {
+	tests := []struct {
+		name         string
+		shortURL     string
+		wantStatus   int
+		wantLocation string
+	}{
+		{
+			name:         "GET: valid short URL",
+			shortURL:     "test_short_url",
+			wantStatus:   http.StatusTemporaryRedirect,
+			wantLocation: "https://www.example.com",
+		},
 		{
 			name:         "GET: invalid short URL",
-			method:       http.MethodGet,
-			body:         "",
+			shortURL:     "invalid_short_url",
 			wantStatus:   http.StatusBadRequest,
 			wantLocation: "",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, "/", strings.NewReader(tt.body))
+			router := gin.Default()
+			router.GET("/:shortURL", redirectHandler)
+
+			if tt.shortURL == "test_short_url" {
+				urlMap[tt.shortURL] = URLPair{URL: &url.URL{Scheme: "https", Host: "www.example.com"}, ShortURL: tt.shortURL}
+			}
+
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", tt.shortURL), nil)
 			rr := httptest.NewRecorder()
-			Handler(rr, req)
+
+			router.ServeHTTP(rr, req)
 
 			assert.Equal(t, tt.wantStatus, rr.Code, "Handler() returned wrong status code")
 
