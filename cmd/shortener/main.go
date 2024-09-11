@@ -3,13 +3,13 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"math/big"
 	"net/http"
 	"net/url"
-
-	"github.com/gin-gonic/gin"
+	"shortUrl/config"
 )
 
 type URLPair struct {
@@ -18,8 +18,16 @@ type URLPair struct {
 }
 
 var urlMap = make(map[string]URLPair)
+var cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func init() {
+	err := cfg.Init()
+	if err != nil {
+		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
+	}
+}
 
 func reduceURL() string {
 	var shortURL string
@@ -39,8 +47,8 @@ func main() {
 	router.POST("/", reduceURLHandler)
 	router.GET("/:shortURL", redirectHandler)
 
-	fmt.Println("Сервер запущен на http://localhost:8080/")
-	log.Fatal(router.Run(":8080"))
+	fmt.Printf("Сервер запущен на %s\n", cfg.HTTPAddr)
+	log.Fatal(router.Run(cfg.HTTPAddr))
 }
 
 func reduceURLHandler(c *gin.Context) {
@@ -61,7 +69,7 @@ func reduceURLHandler(c *gin.Context) {
 	shortURL := reduceURL()
 	urlMap[shortURL] = URLPair{parsedURL, shortURL}
 
-	c.Data(http.StatusCreated, "text/plain", []byte("http://localhost:8080/"+shortURL))
+	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+shortURL))
 }
 
 func redirectHandler(c *gin.Context) {
