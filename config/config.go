@@ -28,7 +28,7 @@ func (c *Config) Init() error {
 	port, err = strconv.Atoi(c.BaseURL[len(c.BaseURL)-5 : len(c.BaseURL)-1])
 
 	if err != nil || port < 0 || port > 8000 {
-		return fmt.Errorf("недопустимый порт базового сервера: %s", c.HTTPAddr)
+		return fmt.Errorf("недопустимый порт базового сервера: %s", c.BaseURL)
 	}
 
 	return nil
