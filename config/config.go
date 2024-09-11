@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/pflag"
+	"net/url"
 	"strconv"
 )
 
@@ -25,7 +26,14 @@ func (c *Config) Init() error {
 		return fmt.Errorf("недопустимый порт HTTP-сервера: %s", c.HTTPAddr)
 	}
 
-	port, err = strconv.Atoi(c.BaseURL[len(c.BaseURL)-5 : len(c.BaseURL)-1])
+	parsedURL, err := url.Parse(c.BaseURL)
+	if err != nil {
+		return fmt.Errorf("ошибка при парсинге базового URL: %w", err)
+	}
+
+	if parsedURL.Port() != "" {
+		port, err = strconv.Atoi(parsedURL.Port())
+	}
 
 	if err != nil || port < 0 || port > 8080 {
 		return fmt.Errorf("недопустимый порт базового сервера: %s", c.BaseURL)
