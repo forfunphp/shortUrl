@@ -14,7 +14,7 @@ func NewConfig() *Config {
 }
 
 func (c *Config) Init() error {
-	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "http://localhost:8080", "адрес прослушивания HTTP-сервера")
+	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080/", "базовый адрес для сокращенных URL")
 	pflag.Parse()
 

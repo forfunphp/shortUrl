@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"shortUrl/config"
+	"strings"
 )
 
 type URLPair struct {
@@ -48,7 +49,9 @@ func main() {
 	router.GET("/:shortURL", redirectHandler)
 
 	fmt.Printf("Сервер запущен на %s\n", cfg.HTTPAddr)
-	log.Fatal(router.Run(cfg.HTTPAddr))
+	colonIndex := strings.Index(cfg.HTTPAddr, ":")
+	port := cfg.HTTPAddr[colonIndex:]
+	log.Fatal(router.Run(port))
 }
 
 func reduceURLHandler(c *gin.Context) {
@@ -68,8 +71,6 @@ func reduceURLHandler(c *gin.Context) {
 
 	shortURL := reduceURL()
 	urlMap[shortURL] = URLPair{parsedURL, shortURL}
-	fmt.Printf("---------------")
-	fmt.Printf(cfg.BaseURL)
 
 	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+shortURL))
 }
