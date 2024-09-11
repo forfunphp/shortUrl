@@ -22,7 +22,7 @@ func (c *Config) Init() error {
 	pflag.Parse()
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
-	if err != nil || port < 0 || port > 8888 {
+	if err != nil || port < 0 || port > 65535 {
 		return fmt.Errorf("недопустимый порт HTTP-сервера: %s", c.HTTPAddr)
 	}
 
@@ -35,7 +35,7 @@ func (c *Config) Init() error {
 		port, err = strconv.Atoi(parsedURL.Port())
 	}
 
-	if err != nil || port < 0 || port > 8080 {
+	if err != nil || port < 0 || port > 65535 {
 		return fmt.Errorf("недопустимый порт базового сервера: %s", c.BaseURL)
 	}
 
