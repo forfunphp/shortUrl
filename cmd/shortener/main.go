@@ -68,6 +68,8 @@ func reduceURLHandler(c *gin.Context) {
 
 	shortURL := reduceURL()
 	urlMap[shortURL] = URLPair{parsedURL, shortURL}
+	fmt.Printf("---------------")
+	fmt.Printf(cfg.BaseURL)
 
 	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+shortURL))
 }
