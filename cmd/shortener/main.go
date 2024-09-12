@@ -75,7 +75,8 @@ func reduceURLHandler(c *gin.Context) {
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	urlMap[shortURL] = URLPair{parsedURL, shortURL}
-	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+shortURL))
+	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+"/"+shortURL))
+
 }
 
 func redirectHandler(c *gin.Context) {
