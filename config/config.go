@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/pflag"
 	"net/url"
+	"os"
 	"strconv"
 )
 
@@ -17,6 +18,10 @@ func NewConfig() *Config {
 }
 
 func (c *Config) Init() error {
+
+	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
+	c.BaseURL = os.Getenv("BASE_URL")
+
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")
 	pflag.Parse()
