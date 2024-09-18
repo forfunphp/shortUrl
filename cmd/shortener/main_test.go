@@ -10,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+
+	"shortUrl/internal/handlers"
 )
 
 func TestReduceURLHandler(t *testing.T) {
@@ -31,9 +33,8 @@ func TestReduceURLHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			router := gin.Default()
-			router.POST("/", reduceURLHandler)
+			router.POST("/", handlers.ReduceURL)
 
 			req := httptest.NewRequest(tt.method, "/", strings.NewReader(tt.body))
 			rr := httptest.NewRecorder()
@@ -70,13 +71,18 @@ func TestRedirectHandler(t *testing.T) {
 		},
 	}
 
+	handlers.UrlMap = make(map[string]handlers.URLPair)
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			router := gin.Default()
-			router.GET("/:shortURL", redirectHandler)
+			router.GET("/:shortURL", handlers.Redirect)
 
 			if tt.shortURL == "test_short_url" {
-				urlMap[tt.shortURL] = URLPair{URL: &url.URL{Scheme: "https", Host: "www.example.com"}, ShortURL: tt.shortURL}
+				handlers.UrlMap[tt.shortURL] = handlers.URLPair{
+					URL:      &url.URL{Scheme: "https", Host: "www.example.com"},
+					ShortURL: tt.shortURL,
+				}
 			}
 
 			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", tt.shortURL), nil)

@@ -17,7 +17,7 @@ type URLPair struct {
 	ShortURL string
 }
 
-var urlMap = make(map[string]URLPair)
+var UrlMap = make(map[string]URLPair)
 var cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -49,7 +49,7 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("linklinklink")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
-	urlMap[shortURL] = URLPair{parsedURL, shortURL}
+	UrlMap[shortURL] = URLPair{parsedURL, shortURL}
 	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+"/"+shortURL))
 }
 
