@@ -49,7 +49,7 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("linklinklink")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
-	UrlMap[shortURL] = URLPair{parsedURL, shortURL}
+	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+"/"+shortURL))
 }
 
