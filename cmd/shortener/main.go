@@ -4,25 +4,27 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"shortUrl/internal/handlers"
+	"shortUrl/config"
 	"strings"
 )
 
+var cfg = config.NewConfig()
+
 func main() {
-	err := handlers.Cfg.Init()
+	err := cfg.Init()
 	if err != nil {
 		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
 	}
 
 	router := gin.Default()
 
-	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
+	fmt.Printf("Сервер запущен на %s\n", cfg.HTTPAddr)
 
-	colonIndex := strings.Index(handlers.Cfg.HTTPAddr, ":")
+	colonIndex := strings.Index(cfg.HTTPAddr, ":")
 	if colonIndex == -1 {
-		log.Fatalf("Неверный формат адреса: %s", handlers.Cfg.HTTPAddr)
+		log.Fatalf("Неверный формат адреса: %s", cfg.HTTPAddr)
 	}
 
-	port := handlers.Cfg.HTTPAddr[colonIndex:]
+	port := cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
 }
