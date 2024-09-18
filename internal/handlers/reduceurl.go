@@ -17,7 +17,7 @@ type URLPair struct {
 	ShortURL string
 }
 
-var UrlMap = make(map[string]URLPair)
+var URLMap = make(map[string]URLPair)
 var cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
