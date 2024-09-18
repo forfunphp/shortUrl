@@ -71,7 +71,7 @@ func TestRedirectHandler(t *testing.T) {
 		},
 	}
 
-	handlers.UrlMap = make(map[string]handlers.URLPair)
+	handlers.URLMap = make(map[string]handlers.URLPair)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestRedirectHandler(t *testing.T) {
 			router.GET("/:shortURL", handlers.Redirect)
 
 			if tt.shortURL == "test_short_url" {
-				handlers.UrlMap[tt.shortURL] = handlers.URLPair{
+				handlers.URLMap[tt.shortURL] = handlers.URLPair{
 					URL:      &url.URL{Scheme: "https", Host: "www.example.com"},
 					ShortURL: tt.shortURL,
 				}
