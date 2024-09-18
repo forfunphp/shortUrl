@@ -18,12 +18,12 @@ type URLPair struct {
 }
 
 var URLMap = make(map[string]URLPair)
-var cfg = config.NewConfig()
+var Cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func init() {
-	err := cfg.Init()
+	err := Cfg.Init()
 	if err != nil {
 		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
 	}
@@ -50,7 +50,7 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
-	c.Data(http.StatusCreated, "text/plain", []byte(cfg.BaseURL+"/"+shortURL))
+	c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
 }
 
 func reduceURL() string {
