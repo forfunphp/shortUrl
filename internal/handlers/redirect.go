@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"net/url"
 )
 
 func Redirect(c *gin.Context) {

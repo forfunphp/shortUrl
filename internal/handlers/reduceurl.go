@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"shortUrl/config"
-	"strings"
 )
 
 type URLPair struct {

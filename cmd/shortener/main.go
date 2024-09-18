@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"shortUrl/config"
 	"shortUrl/internal/handlers"
 	"strings"
 )
+
+var cfg = config.NewConfig()
 
 func main() {
 	router := gin.Default()
