@@ -43,7 +43,7 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 
 		h(c)
 
-		//   логи
+		//  логи
 		duration := time.Since(start)
 		logger.Info("Request processed",
 			zap.String("method", c.Request.Method),
