@@ -1,9 +1,11 @@
 package main
 
 import (
+	"compress/gzip"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"io"
 	"log"
 	"shortUrl/internal/handlers"
 	"strings"
@@ -19,6 +21,7 @@ func main() {
 	defer logger.Sync()
 
 	router := gin.Default()
+	router.Use(handlers.GzipMiddleware())
 
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
