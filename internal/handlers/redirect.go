@@ -13,5 +13,6 @@ func Redirect(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Нет урла"})
 		return
 	}
+
 	c.Redirect(http.StatusTemporaryRedirect, URLPair.URL.String())
 }
