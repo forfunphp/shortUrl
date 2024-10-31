@@ -17,10 +17,6 @@ type URLPair struct {
 	ShortURL string
 }
 
-type ShortURL struct {
-	ShortURL string `json:"result"`
-}
-
 var URLMap = make(map[string]URLPair)
 var Cfg = config.NewConfig()
 
@@ -50,14 +46,11 @@ func ReduceURL(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	fmt.Printf("lin2klink2link---")
+	fmt.Printf("linklinklink")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
-
-	result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-	fmt.Printf("Здесь json----")
-	c.JSON(http.StatusCreated, result)
+	c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
 }
 
 func reduceURL() string {
