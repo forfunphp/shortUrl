@@ -56,7 +56,7 @@ func Shorten(c *gin.Context) {
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-	fmt.Printf("Здесь json----")
+	fmt.Printf("Здесь json---")
 	c.JSON(http.StatusCreated, result)
 }
 
