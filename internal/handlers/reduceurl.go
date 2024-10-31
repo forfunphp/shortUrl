@@ -50,13 +50,13 @@ func ReduceURL(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	fmt.Printf("lin2klinklink---")
+	fmt.Printf("lin2klink2link---")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-	fmt.Printf("Здесь json---")
+	fmt.Printf("Здесь json----")
 	c.JSON(http.StatusCreated, result)
 }
 

@@ -6,5 +6,5 @@ import (
 
 func Shorten(c *gin.Context) {
 	c.Request.URL.Path = "/"
-	ReduceURL(c) // Используем существующий ReduceURL
+	ReduceURL(c)
 }
