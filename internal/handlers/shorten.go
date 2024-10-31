@@ -1,36 +1,15 @@
 package handlers
 
 import (
-	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
-	"log"
-	"math/big"
 	"net/http"
 	"net/url"
-	"shortUrl/config"
 )
-
-type URLPair struct {
-	URL      *url.URL
-	ShortURL string
-}
 
 type ShortURL struct {
 	ShortURL string `json:"result"`
-}
-
-var URLMap = make(map[string]URLPair)
-var Cfg = config.NewConfig()
-
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-func init() {
-	err := Cfg.Init()
-	if err != nil {
-		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
-	}
 }
 
 func Shorten(c *gin.Context) {
@@ -56,18 +35,6 @@ func Shorten(c *gin.Context) {
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-	fmt.Printf("Здесь json---")
+	fmt.Printf("Здесь json-----")
 	c.JSON(http.StatusCreated, result)
-}
-
-func reduceURL() string {
-	var shortURL string
-	for i := 0; i < 8; i++ {
-		randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
-		if err != nil {
-			panic(err)
-		}
-		shortURL += string(charset[randomIndex.Int64()])
-	}
-	return shortURL
 }
