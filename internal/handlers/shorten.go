@@ -32,9 +32,6 @@ func Shorten(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	fmt.Printf("Здесь json--->")
-	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
-
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	var resp ShortURL                            // Инициализируем структуру ShortURL
@@ -47,10 +44,8 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	fmt.Println(string(jsonData))
 	// Отправляем ответ
-	c.JSON(http.StatusOK, jsonData) // Удаляем string(jsonData)
-
-	fmt.Printf("<----Здесь json")
+	c.Data(http.StatusOK, "application/json", jsonData) // Удаляем string(jsonData)
 
 }
