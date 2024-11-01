@@ -9,7 +9,7 @@ import (
 )
 
 type ShortenRequest struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 type ShortURL struct {
 	ShortURL string `json:"result"` // Имя поля `result` соответствует JSON
@@ -24,7 +24,7 @@ func Shorten(c *gin.Context) {
 	}
 
 	// Парсим URL из структуры запроса
-	parsedURL, err := url.Parse(req.Url) // Используем req.Url
+	parsedURL, err := url.Parse(req.URL) // Используем req.Url
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось спарсить URL"})
 		return
