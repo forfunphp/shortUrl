@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io"
 	"net/http"
 	"net/url"
 )
@@ -13,18 +12,22 @@ type ShortURL struct {
 	ShortURL string `json:"result"`
 }
 
+type ShortenRequest struct {
+	Url string `json:"url"`
+}
+
 func Shorten(c *gin.Context) {
 
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
+	var req ShortenRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный JSON"})
 		return
 	}
 
-	URL := string(body)
-	parsedURL, err := url.Parse(URL)
+	// Парсим URL из структуры запроса
+	parsedURL, err := url.Parse(req.Url) // Используем req.Url
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил URL"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось спарсить URL"})
 		return
 	}
 
