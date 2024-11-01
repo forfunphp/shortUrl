@@ -8,12 +8,11 @@ import (
 	"net/url"
 )
 
-type ShortURL struct {
-	ShortURL string `json:"result"`
-}
-
 type ShortenRequest struct {
 	Url string `json:"url"`
+}
+type ShortURL struct {
+	ShortURL string `json:"result"` // Имя поля `result` соответствует JSON
 }
 
 func Shorten(c *gin.Context) {
@@ -42,6 +41,7 @@ func Shorten(c *gin.Context) {
 	resp.ShortURL = Cfg.BaseURL + "/" + shortURL // Заполняем поле ShortURL
 
 	// Кодируем ответ в JSON
+
 	jsonData, err := json.Marshal(resp)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -49,7 +49,7 @@ func Shorten(c *gin.Context) {
 	}
 
 	// Отправляем ответ
-	c.JSON(http.StatusCreated, string(jsonData))
+	c.JSON(http.StatusOK, jsonData) // Удаляем string(jsonData)
 
 	fmt.Printf("<----Здесь json")
 
