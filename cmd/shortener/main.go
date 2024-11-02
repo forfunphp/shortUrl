@@ -16,7 +16,6 @@ var sugar zap.SugaredLogger
 func main() {
 
 	logger, _ := zap.NewDevelopment()
-
 	defer logger.Sync()
 
 	router := gin.Default()
