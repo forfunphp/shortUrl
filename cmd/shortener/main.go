@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"io"
 	"log"
 	"shortUrl/internal/handlers"
 	"strings"
@@ -21,7 +20,7 @@ func main() {
 	defer logger.Sync()
 
 	router := gin.Default()
-	router.Use(handlers.GzipMiddleware())
+	router.Use(gzipMiddleware())
 
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
@@ -36,6 +35,52 @@ func main() {
 
 	port := handlers.Cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
+}
+
+func gzipMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
+			c.Next()
+			return
+		}
+
+		c.Writer.Header().Set("Content-Encoding", "gzip")
+
+		gw := gzip.NewWriter(c.Writer)
+		defer gw.Close()
+
+		c.Writer = &gzipResponseWriter{
+			ResponseWriter: c.Writer,
+			gzipWriter:     gw,
+		}
+
+		c.Next()
+
+		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
+			gw.gzipWriter.Close()
+		}
+	}
+}
+
+// gzipResponseWriter — структура для обертывания gin.ResponseWriter и gzip.Writer
+type gzipResponseWriter struct {
+	gin.ResponseWriter
+	gzipWriter *gzip.Writer
+}
+
+// Реализация методов gin.ResponseWriter
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.gzipWriter.Write(b)
+}
+
+func (w *gzipResponseWriter) WriteString(s string) (int, error) {
+	return w.gzipWriter.Write([]byte(s))
+}
+
+func (w *gzipResponseWriter) Flush() {
+	w.gzipWriter.Flush()
+	w.ResponseWriter.Flush()
 }
 
 func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
