@@ -44,6 +44,12 @@ func gzipMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		contentType := c.Writer.Header().Get("Content-Type")
+		if contentType != "application/json" && contentType != "text/html" && contentType != "text/plain" {
+			c.Next()
+			return
+		}
+
 		c.Writer.Header().Set("Content-Encoding", "gzip")
 
 		gw := gzip.NewWriter(c.Writer)
