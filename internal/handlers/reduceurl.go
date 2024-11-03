@@ -44,7 +44,7 @@ func ReduceURL(c *gin.Context) {
 	URL := string(body)
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил URL"})
+		c.JSON(http.StatusBadRequest, gin.H{URL + "error": "Не спарсил URL"})
 		return
 	}
 
