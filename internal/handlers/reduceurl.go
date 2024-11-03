@@ -59,7 +59,7 @@ func ReduceURL(c *gin.Context) {
 
 	contentType := c.Request.Header.Get("Content-Type")
 	if contentType == "text/html" {
-		c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
+		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else {
 		c.JSON(http.StatusCreated, result)
 	}
