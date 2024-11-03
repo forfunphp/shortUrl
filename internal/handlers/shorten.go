@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
@@ -41,8 +40,19 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println(string(jsonData))
+	//fmt.Println(string(jsonData))
+
+	contentType := c.Request.Header.Get("Content-Type")
+	if contentType == "text/html" {
+		c.Data(http.StatusCreated, "text/html; charset=utf-8", jsonData)
+	} else if contentType == "text/plain; charset=utf-8" {
+		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
+	} else if contentType == "application/json" {
+
+		//c.JSON(http.StatusCreated, result)
+		c.Data(http.StatusCreated, "application/json", jsonData)
+	}
 	// Отправляем ответ
-	c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
+	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
 
 }
