@@ -59,10 +59,6 @@ func ReduceURL(c *gin.Context) {
 
 	contentType := c.Request.Header.Get("Content-Type")
 
-	fmt.Printf("ЗдесьcontentType----")
-	fmt.Printf(contentType)
-	fmt.Printf("<!===ЗдесьcontentType----")
-
 	if contentType == "text/plain" {
 		c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else {
