@@ -55,14 +55,13 @@ func ReduceURL(c *gin.Context) {
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
-	result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-
 	contentType := c.Request.Header.Get("Content-Type")
 	if contentType == "text/html" {
 		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else if contentType == "text/plain" {
 		c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else {
+		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
 		c.JSON(http.StatusCreated, result)
 	}
 
