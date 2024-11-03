@@ -20,9 +20,9 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(gzipMiddleware())
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
-	router.Use(gzipMiddleware())
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
@@ -45,12 +45,6 @@ func gzipMiddleware() gin.HandlerFunc {
 		}
 
 		c.Writer.Header().Set("Content-Encoding", "gzip")
-
-		contentType := c.Writer.Header().Get("Content-Type")
-
-		if contentType == "text/plain" {
-			c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		}
 
 		gw := gzip.NewWriter(c.Writer)
 		defer gw.Close()
