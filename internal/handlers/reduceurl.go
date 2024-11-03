@@ -18,7 +18,7 @@ type URLPair struct {
 }
 
 type ShortURL struct {
-	ShortURL string `json:"result1"`
+	ShortURL string `json:"result"`
 }
 
 var URLMap = make(map[string]URLPair)
