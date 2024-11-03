@@ -58,7 +58,7 @@ func ReduceURL(c *gin.Context) {
 	contentType := c.Request.Header.Get("Content-Type")
 	if contentType == "text/html" {
 		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))
-	} else if contentType == "text/plain" {
+	} else if contentType == "text/plain; charset=utf-8" {
 		c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else if contentType == "application/json" {
 		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
