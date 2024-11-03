@@ -18,7 +18,7 @@ type URLPair struct {
 }
 
 type ShortURL struct {
-	ShortURL string `json:"result"`
+	ShortURL string `json:"result1"`
 }
 
 var URLMap = make(map[string]URLPair)
@@ -60,7 +60,7 @@ func ReduceURL(c *gin.Context) {
 		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else if contentType == "text/plain" {
 		c.Data(http.StatusCreated, "text/plain", []byte(Cfg.BaseURL+"/"+shortURL))
-	} else {
+	} else if contentType == "application/json" {
 		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
 		c.JSON(http.StatusCreated, result)
 	}
