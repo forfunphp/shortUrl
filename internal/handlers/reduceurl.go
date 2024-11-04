@@ -70,24 +70,8 @@ func ReduceURL(c *gin.Context) {
 		c.JSON(http.StatusCreated, result)
 	} else if contentType == "application/x-gzip" {
 
-		jsonBytes, err := json.Marshal(gin.H{"ShortURL": Cfg.BaseURL + "/" + shortURL})
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка сериализации JSON"})
-			return
-		}
-
-		// Сжимаем JSON-ответ с помощью gzip
-		var buffer bytes.Buffer
-		gzipWriter := gzip.NewWriter(&buffer)
-		_, err = gzipWriter.Write(jsonBytes)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка сжатия gzip"})
-			return
-		}
-		gzipWriter.Close()
-
 		// Отправляем сжатый ответ с Content-Type: application/x-gzip
-		c.Data(http.StatusCreated, "application/x-gzip", buffer.Bytes())
+		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
 }
