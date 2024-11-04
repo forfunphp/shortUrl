@@ -36,24 +36,11 @@ func main() {
 	log.Fatal(router.Run(port))
 }
 
-func gzipMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
-			c.Next()
-			return
-		}
-
-	}
-}
-
-// gzipResponseWriter — структура для обертывания gin.ResponseWriter и gzip.Writer
 type gzipResponseWriter struct {
 	gin.ResponseWriter
 	gzipWriter *gzip.Writer
 }
 
-// Реализация методов gin.ResponseWriter
 func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.gzipWriter.Write(b)
 }
@@ -62,9 +49,40 @@ func (w *gzipResponseWriter) WriteString(s string) (int, error) {
 	return w.gzipWriter.Write([]byte(s))
 }
 
-func (w *gzipResponseWriter) Flush() {
-	w.gzipWriter.Flush()
-	w.ResponseWriter.Flush()
+func gzipMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Проверка заголовка Accept-Encoding
+		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
+			c.Next()
+			return
+		}
+
+		// Проверка типа контента
+		if c.ContentType() == "application/json" || c.ContentType() == "text/html" {
+			// Установка заголовка Content-Encoding
+			c.Writer.Header().Set("Content-Encoding", "gzip")
+
+			// Создание gzip.Writer
+			gw := gzip.NewWriter(c.Writer)
+			defer gw.Close()
+
+			// Замена Writer на gzipResponseWriter
+			c.Writer = &gzipResponseWriter{
+				ResponseWriter: c.Writer,
+				gzipWriter:     gw,
+			}
+
+			// Вызов следующего обработчика
+			c.Next()
+
+			// Закрытие gzipWriter
+			if gw, ok := c.Writer.(*gzipResponseWriter); ok {
+				gw.gzipWriter.Close()
+			}
+		} else {
+			c.Next()
+		}
+	}
 }
 
 func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
