@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 )
@@ -21,6 +22,14 @@ func Shorten(c *gin.Context) {
 
 	// Парсим URL из структуры запроса
 	parsedURL, err := url.Parse(req.URL) // Используем req.Url
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed1",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
+	)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось спарсить URL"})
 		return
