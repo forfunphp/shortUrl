@@ -45,6 +45,13 @@ func ReduceURL(c *gin.Context) {
 
 	URL := string(body)
 	parsedURL, err := url.Parse(URL)
+
+	logger, _ := zap.NewDevelopment()
+	logger.Info("Request processed1",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
+	)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{URL + "error": "Не спарсил URL"})
 		return
@@ -54,14 +61,6 @@ func ReduceURL(c *gin.Context) {
 
 	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
-	fmt.Printf("<!-----lin2klink2link---")
-	fmt.Printf(parsedURL.String())
-
-	logger, _ := zap.NewDevelopment()
-	logger.Info("Request processed",
-		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
-	)
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
