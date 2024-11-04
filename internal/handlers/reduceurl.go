@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"io"
 	"log"
 	"math/big"
@@ -55,6 +56,12 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 	fmt.Printf("<!-----lin2klink2link---")
 	fmt.Printf(parsedURL.String())
+
+	logger, _ := zap.NewDevelopment()
+	logger.Info("Request processed",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
+	)
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
