@@ -96,6 +96,7 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 			zap.String("method", c.Request.Method),
 			zap.String("path", c.Request.URL.Path),
 			zap.Duration("duration", duration), // Получаем статус
+			zap.Int("statusCode", c.Writer.Status()),
 		)
 	}
 }
