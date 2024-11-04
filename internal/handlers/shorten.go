@@ -61,9 +61,7 @@ func Shorten(c *gin.Context) {
 		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
 	} else if contentType == "application/json" {
 		//c.JSON(http.StatusCreated, string(jsonData))
-		c.Status(http.StatusCreated)
-		c.JSON(http.StatusCreated, string(jsonData))
-		//c.Data(http.StatusCreated, "application/json", string(jsonData))
+		c.JSON(http.StatusCreated, jsonData)
 	} else if contentType == "application/x-gzip" {
 		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
 	}
