@@ -49,6 +49,7 @@ func Shorten(c *gin.Context) {
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
 		zap.String("parsedURL", string(jsonData)),
 		zap.String("contentType", contentType), // Добавляем parsedURL
+		zap.Int("statusCode", c.Writer.Status()),
 	)
 	//fmt.Println(string(jsonData))
 
@@ -57,8 +58,8 @@ func Shorten(c *gin.Context) {
 	} else if contentType == "text/plain; charset=utf-8" {
 		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
 	} else if contentType == "application/json" {
-		//c.JSON(http.StatusCreated, result)
-		c.Data(http.StatusCreated, "application/json", jsonData)
+		c.JSON(http.StatusCreated, jsonData)
+		//c.Data(http.StatusCreated, "application/json", jsonData)
 	} else if contentType == "application/x-gzip" {
 		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
 	}
