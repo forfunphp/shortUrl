@@ -47,6 +47,7 @@ func ReduceURL(c *gin.Context) {
 	parsedURL, err := url.Parse(URL)
 
 	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
 	logger.Info("Request processed1",
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
 		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
