@@ -39,6 +39,24 @@ func init() {
 func ReduceURL(c *gin.Context) {
 
 	body, err := io.ReadAll(c.Request.Body)
+
+	if c.Request.Header.Get("Content-Encoding") == "gzip" {
+		// Распаковка gzip
+		gzipReader, err := gzip.NewReader(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось распаковать gzip"})
+			return
+		}
+		defer gzipReader.Close()
+
+		// Чтение распакованных данных
+		body, err = io.ReadAll(gzipReader)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
+			return
+		}
+	}
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 		return
