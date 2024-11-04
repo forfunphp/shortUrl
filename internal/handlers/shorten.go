@@ -42,15 +42,27 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	contentType := c.Request.Header.Get("Content-Type")
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
 	logger.Info("Request processed1",
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("parsedURL", string(jsonData)),     // Добавляем parsedURL
+		zap.String("parsedURL", string(jsonData)),
+		zap.String("contentType", contentType), // Добавляем parsedURL
 	)
 	//fmt.Println(string(jsonData))
 
-	c.Data(http.StatusInternalServerError, "application/x-gzip", jsonData)
+	if contentType == "text/html" {
+		c.Data(http.StatusCreated, "text/html; charset=utf-8", jsonData)
+	} else if contentType == "text/plain; charset=utf-8" {
+		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
+	} else if contentType == "application/json" {
+		//c.JSON(http.StatusCreated, result)
+		c.Data(http.StatusCreated, "application/json", jsonData)
+	} else if contentType == "application/x-gzip" {
+		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
+	}
+	// Отправляем ответ
+	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
 
 }
