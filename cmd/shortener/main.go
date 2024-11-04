@@ -39,6 +39,11 @@ func main() {
 func gzipMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
+		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
+			c.Next()
+			return
+		}
+
 		c.Writer.Header().Set("Content-Encoding", "gzip")
 
 		gw := gzip.NewWriter(c.Writer)
