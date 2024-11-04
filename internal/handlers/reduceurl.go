@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"bytes"
-	"compress/gzip"
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
