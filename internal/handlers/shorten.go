@@ -23,13 +23,6 @@ func Shorten(c *gin.Context) {
 	// Парсим URL из структуры запроса
 	parsedURL, err := url.Parse(req.URL) // Используем req.Url
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed1",
-		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
-	)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось спарсить URL"})
 		return
@@ -49,6 +42,13 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed1",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", string(jsonData)),     // Добавляем parsedURL
+	)
 	//fmt.Println(string(jsonData))
 
 	contentType := c.Request.Header.Get("Content-Type")
@@ -60,7 +60,7 @@ func Shorten(c *gin.Context) {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	} else if contentType == "application/x-gzip" {
-		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
+		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
 	}
 	// Отправляем ответ
 	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
