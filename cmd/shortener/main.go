@@ -39,11 +39,6 @@ func main() {
 func gzipMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
-			c.Next()
-			return
-		}
-
 		c.Writer.Header().Set("Content-Encoding", "gzip")
 
 		gw := gzip.NewWriter(c.Writer)
@@ -54,10 +49,6 @@ func gzipMiddleware() gin.HandlerFunc {
 			gzipWriter:     gw,
 		}
 
-		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
-			gw.gzipWriter.Close()
-		}
-
 		logger, _ := zap.NewDevelopment()
 		defer logger.Sync()
 		logger.Info("Request processedlog",
@@ -66,6 +57,11 @@ func gzipMiddleware() gin.HandlerFunc {
 		)
 
 		c.Next()
+
+		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
+			gw.gzipWriter.Close()
+		}
+
 	}
 }
 
