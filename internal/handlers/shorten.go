@@ -51,18 +51,6 @@ func Shorten(c *gin.Context) {
 	)
 	//fmt.Println(string(jsonData))
 
-	contentType := c.Request.Header.Get("Content-Type")
-	if contentType == "text/html" {
-		c.Data(http.StatusCreated, "text/html; charset=utf-8", jsonData)
-	} else if contentType == "text/plain; charset=utf-8" {
-		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
-	} else if contentType == "application/json" {
-		//c.JSON(http.StatusCreated, result)
-		c.Data(http.StatusCreated, "application/json", jsonData)
-	} else if contentType == "application/x-gzip" {
-		c.Data(http.StatusInternalServerError, "application/x-gzip", jsonData)
-	}
-	// Отправляем ответ
-	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
+	c.Data(http.StatusInternalServerError, "application/x-gzip", jsonData)
 
 }
