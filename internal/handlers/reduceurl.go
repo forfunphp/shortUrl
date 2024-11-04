@@ -51,8 +51,10 @@ func ReduceURL(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	fmt.Printf("lin2klink2link---")
+	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
+	fmt.Printf("<!-----lin2klink2link---")
+	fmt.Printf(parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
