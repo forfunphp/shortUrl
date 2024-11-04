@@ -54,11 +54,18 @@ func gzipMiddleware() gin.HandlerFunc {
 			gzipWriter:     gw,
 		}
 
-		c.Next()
-
 		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
 			gw.gzipWriter.Close()
 		}
+
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+		logger.Info("Request processedlog",
+			zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+			zap.Int("statusCode", c.Writer.Status()),      // Добавляем parsedURL
+		)
+
+		c.Next()
 	}
 }
 
