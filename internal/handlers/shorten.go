@@ -49,11 +49,10 @@ func Shorten(c *gin.Context) {
 		c.Data(http.StatusCreated, "text/html; charset=utf-8", jsonData)
 	} else if contentType == "text/plain; charset=utf-8" {
 		c.Data(http.StatusCreated, "text/plain; charset=utf-8", jsonData)
-	} else if contentType == "application/json"
-	{
+	} else if contentType == "application/json" {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
-	} else if contentType == "application/x-gzip"	{
+	} else if contentType == "application/x-gzip" {
 
 		jsonBytes, err := json.Marshal(gin.H{"ShortURL": Cfg.BaseURL + "/" + shortURL})
 		if err != nil {
