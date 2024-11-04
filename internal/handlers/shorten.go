@@ -67,7 +67,7 @@ func Shorten(c *gin.Context) {
 			zap.String("contentType2", contentType), // Добавляем parsedURL
 			zap.Int("statusCode2", c.Writer.Status()),
 		)
-		c.JSON(http.StatusCreated, jsonData)
+		c.Data(http.StatusCreated, "application/json", jsonData)
 	} else if contentType == "application/x-gzip" {
 		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
 	}
