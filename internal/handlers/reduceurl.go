@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -74,23 +73,7 @@ func ReduceURL(c *gin.Context) {
 	} else if contentType == "application/json" {
 
 		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-
-		logger, _ := zap.NewDevelopment()
-		defer logger.Sync()
-		logger.Info("Request processed3",
-			zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-			zap.String("parsedURL", Cfg.BaseURL+"/"+shortURL),
-			zap.String("contentType", contentType), // Добавляем parsedURL
-			zap.Int("statusCode", c.Writer.Status()),
-		)
-		jsonData, err := json.Marshal(result)
-		if err != nil {
-			// Обработка ошибки сериализации
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize data"})
-			return
-		}
-
-		c.Data(http.StatusCreated, "application/json", jsonData)
+		c.JSON(http.StatusCreated, result)
 	} else if contentType == "application/x-gzip" {
 
 		// Отправляем сжатый ответ с Content-Type: application/x-gzip
