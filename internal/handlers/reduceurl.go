@@ -44,7 +44,7 @@ func ReduceURL(c *gin.Context) {
 		// Распаковка gzip
 		gzipReader, err := gzip.NewReader(c.Request.Body)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось распаковать gzip"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось распаковать gzip1"})
 			return
 		}
 		defer gzipReader.Close()
