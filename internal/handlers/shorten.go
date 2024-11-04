@@ -60,7 +60,7 @@ func Shorten(c *gin.Context) {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	} else {
-		c.Data(http.StatusInternalServerError, "application/x-gzip", jsonData)
+		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
 	}
 	// Отправляем ответ
 	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
