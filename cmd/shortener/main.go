@@ -44,29 +44,6 @@ func gzipMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Writer.Header().Set("Content-Encoding", "gzip")
-
-		gw := gzip.NewWriter(c.Writer)
-		defer gw.Close()
-
-		c.Writer = &gzipResponseWriter{
-			ResponseWriter: c.Writer,
-			gzipWriter:     gw,
-		}
-
-		logger, _ := zap.NewDevelopment()
-		defer logger.Sync()
-		logger.Info("Request processedlog",
-			zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-			zap.Int("statusCode", c.Writer.Status()),      // Добавляем parsedURL
-		)
-
-		c.Next()
-
-		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
-			gw.gzipWriter.Close()
-		}
-
 	}
 }
 
