@@ -77,7 +77,7 @@ func ReduceURL(c *gin.Context) {
 	} else if contentType == "application/x-gzip" {
 
 		// Отправляем сжатый ответ с Content-Type: application/x-gzip
-		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
+		//c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
 }
