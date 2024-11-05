@@ -85,10 +85,10 @@ func gzipMiddleware() gin.HandlerFunc {
 			gzipWriter:     gw,
 		}
 
-		logger, _ := zap.NewDevelopment()
-		defer logger.Sync()
+		logger2, _ := zap.NewDevelopment()
+		defer logger2.Sync()
 
-		logger.Info("Request processed33ff",
+		logger2.Info("Request processed33ff",
 			zap.String("method", c.Request.Method),
 			zap.String("path", c.ContentType()),
 			zap.Int("statusCode", c.Writer.Status()),
