@@ -46,13 +46,6 @@ func ReduceURL(c *gin.Context) {
 	URL := string(body)
 	parsedURL, err := url.Parse(URL)
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed1",
-		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("parsedURL", parsedURL.String()),   // Добавляем parsedURL
-	)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{URL + "error": "Не спарсил URL"})
 		return
@@ -66,6 +59,16 @@ func ReduceURL(c *gin.Context) {
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	contentType := c.Request.Header.Get("Content-Type")
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed1ss",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", parsedURL.String()),
+		zap.String("contentType", contentType),
+		zap.String("Status", c.Writer.Status()), // Добавляем parsedURL
+	)
+
 	if contentType == "text/html" {
 		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))
 	} else if contentType == "text/plain; charset=utf-8" {
@@ -76,7 +79,7 @@ func ReduceURL(c *gin.Context) {
 		c.JSON(http.StatusCreated, result)
 	} else if contentType == "application/x-gzip" {
 		// Отправляем сжатый ответ с Content-Type: application/x-gzip
-		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
+		//c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
 }
