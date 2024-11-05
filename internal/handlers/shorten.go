@@ -14,6 +14,12 @@ type ShortenRequest struct {
 
 func Shorten(c *gin.Context) {
 
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed33333",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+	)
+
 	var req ShortenRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный JSON"})
