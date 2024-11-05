@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"compress/gzip"
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,6 @@ import (
 	"net/http"
 	"net/url"
 	"shortUrl/config"
-	"strings"
 )
 
 type URLPair struct {
@@ -39,25 +37,10 @@ func init() {
 func ReduceURL(c *gin.Context) {
 
 	body, err := io.ReadAll(c.Request.Body)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 		return
-	}
-	if strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
-		// Разархивируем данные
-		reader, err := gzip.NewReader(c.Request.Body)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось раз архивировать данные"})
-			return
-		}
-		defer reader.Close()
-
-		// Читаем тело запроса
-		body, err = io.ReadAll(reader)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
-			return
-		}
 	}
 
 	URL := string(body)
