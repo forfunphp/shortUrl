@@ -49,9 +49,9 @@ func Shorten(c *gin.Context) {
 		return
 	}
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed1",
+	logger3, _ := zap.NewDevelopment()
+	defer logger3.Sync()
+	logger3.Info("Request processed1",
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
 		zap.String("parsedURL", string(jsonData)),     // Добавляем parsedURL
 	)
