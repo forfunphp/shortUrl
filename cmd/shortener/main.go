@@ -52,6 +52,17 @@ func (w *gzipResponseWriter) WriteString(s string) (int, error) {
 func gzipMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Проверка заголовка Accept-Encoding
+
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+
+		logger.Info("Request processed33ff",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.ContentType()),
+			zap.String("Encoding", c.Request.Header.Get("Accept-Encoding")),
+			zap.Int("statusCode", c.Writer.Status()),
+		)
+
 		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
 			c.Next()
 			return
@@ -61,6 +72,8 @@ func gzipMiddleware() gin.HandlerFunc {
 
 		// Установка заголовка Content-Encoding
 		c.Writer.Header().Set("Content-Encoding", "gzip")
+
+		//originalContentType := c.Writer.Header().Get("Content-Type")
 
 		// Создание gzip.Writer
 		gw := gzip.NewWriter(c.Writer)
