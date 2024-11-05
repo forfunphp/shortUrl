@@ -57,6 +57,15 @@ func gzipMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+
+		logger.Info("Request processed33ff",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.ContentType),
+			zap.Int("statusCode", c.Writer.Status()),
+		)
+
 		// Проверка типа контента
 		if c.ContentType() == "application/json" || c.ContentType() == "text/html" {
 			// Установка заголовка Content-Encoding

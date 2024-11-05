@@ -39,7 +39,7 @@ func Shorten(c *gin.Context) {
 
 	jsonData, err := json.Marshal(resp)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -60,7 +60,7 @@ func Shorten(c *gin.Context) {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	} else {
-		c.Data(http.StatusCreated, "application/x-gzip", jsonData)
+		c.Data(http.StatusCreated, "application/json", jsonData)
 	}
 	// Отправляем ответ
 	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
