@@ -67,6 +67,6 @@ func Shorten(c *gin.Context) {
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	}
 
-	c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
+	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
 
 }
