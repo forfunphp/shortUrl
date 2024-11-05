@@ -66,7 +66,7 @@ func ReduceURL(c *gin.Context) {
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
 		zap.String("parsedURL", parsedURL.String()),
 		zap.String("contentType", contentType),
-		zap.String("Status", c.Writer.Status()), // Добавляем parsedURL
+		zap.Int("Status", c.Writer.Status()), // Добавляем parsedURL
 	)
 
 	if contentType == "text/html" {
