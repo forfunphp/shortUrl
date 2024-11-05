@@ -54,7 +54,7 @@ func ReduceURL(c *gin.Context) {
 		defer reader.Close()
 
 		// Читаем тело запроса
-		body, err := ioutil.ReadAll(reader)
+		body, err = ioutil.ReadAll(reader)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 			return
@@ -68,8 +68,8 @@ func ReduceURL(c *gin.Context) {
 	defer logger2.Sync()
 	logger2.Info("Request xxxxx",
 		zap.String("fullURL", URL),
-		zap.String("fullURL", parsedURL),     // Добавляем полный URL
-		zap.Int("Status", c.Writer.Status()), // Добавляем parsedURL
+		zap.String("fullURL", parsedURL.String()), // Добавляем полный URL
+		zap.Int("Status", c.Writer.Status()),      // Добавляем parsedURL
 	)
 
 	if err != nil {
