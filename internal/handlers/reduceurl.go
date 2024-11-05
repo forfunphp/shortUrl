@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
@@ -109,7 +108,7 @@ func readRequestBody(c *gin.Context) ([]byte, error) {
 			return nil, err
 		}
 		defer reader.Close()
-		return ioutil.ReadAll(reader)
+		return io.ReadAll(reader)
 	} else {
 		return io.ReadAll(c.Request.Body)
 	}
