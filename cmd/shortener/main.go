@@ -56,7 +56,7 @@ func gzipMiddleware() gin.HandlerFunc {
 		logger, _ := zap.NewDevelopment()
 		defer logger.Sync()
 
-		logger.Info("Request processed33ff",
+		logger.Info("Request processed33ffddd",
 			zap.String("method", c.Request.Method),
 			zap.String("path", c.ContentType()),
 			zap.String("Encoding", c.Request.Header.Get("Accept-Encoding")),

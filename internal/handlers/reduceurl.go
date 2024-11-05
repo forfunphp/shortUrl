@@ -1,16 +1,19 @@
 package handlers
 
 import (
+	"compress/gzip"
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
 	"net/url"
 	"shortUrl/config"
+	"strings"
 )
 
 type URLPair struct {
@@ -37,10 +40,25 @@ func init() {
 func ReduceURL(c *gin.Context) {
 
 	body, err := io.ReadAll(c.Request.Body)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 		return
+	}
+	if strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
+		// Разархивируем данные
+		reader, err := gzip.NewReader(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось раз архивировать данные"})
+			return
+		}
+		defer reader.Close()
+
+		// Читаем тело запроса
+		body, err := ioutil.ReadAll(reader)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
+			return
+		}
 	}
 
 	URL := string(body)
@@ -49,7 +67,8 @@ func ReduceURL(c *gin.Context) {
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request xxxxx",
-		zap.String("fullURL", URL),           // Добавляем полный URL
+		zap.String("fullURL", URL),
+		zap.String("fullURL", parsedURL),     // Добавляем полный URL
 		zap.Int("Status", c.Writer.Status()), // Добавляем parsedURL
 	)
 
