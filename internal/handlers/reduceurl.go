@@ -51,22 +51,12 @@ func ReduceURL(c *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
-		return
-	}
-
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request xxxxx",
 		zap.String("fullURL", parsedURL.String()), // Добавляем полный URL
 		zap.Int("Status", c.Writer.Status()),      // Добавляем parsedURL
 	)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил URL"})
-		return
-	}
 
 	shortURL := reduceURL()
 
