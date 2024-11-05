@@ -46,6 +46,13 @@ func ReduceURL(c *gin.Context) {
 	URL := string(body)
 	parsedURL, err := url.Parse(URL)
 
+	logger2, _ := zap.NewDevelopment()
+	defer logger2.Sync()
+	logger2.Info("Request xxxxx",
+		zap.String("fullURL", URL),           // Добавляем полный URL
+		zap.Int("Status", c.Writer.Status()), // Добавляем parsedURL
+	)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{URL + "error": "Не спарсил URL"})
 		return
