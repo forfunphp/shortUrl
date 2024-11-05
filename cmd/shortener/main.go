@@ -62,7 +62,7 @@ func gzipMiddleware() gin.HandlerFunc {
 
 		logger.Info("Request processed33ff",
 			zap.String("method", c.Request.Method),
-			zap.String("path", c.ContentType),
+			zap.String("path", c.ContentType()),
 			zap.Int("statusCode", c.Writer.Status()),
 		)
 
