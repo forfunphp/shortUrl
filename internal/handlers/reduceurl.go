@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
@@ -54,7 +53,7 @@ func ReduceURL(c *gin.Context) {
 		defer reader.Close()
 
 		// Читаем тело запроса
-		body, err = ioutil.ReadAll(reader)
+		body, err = io.ReadAll(reader)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 			return
