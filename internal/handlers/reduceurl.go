@@ -85,10 +85,9 @@ func ReduceURL(c *gin.Context) {
 		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
 		c.JSON(http.StatusCreated, result)
 	} else if contentType == "application/x-gzip" {
-		result := ShortURL{ShortURL: Cfg.BaseURL + "/" + shortURL}
-		c.JSON(http.StatusCreated, result)
+
 		// Отправляем сжатый ответ с Content-Type: application/x-gzip
-		//c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
+		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
 }
