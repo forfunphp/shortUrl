@@ -14,9 +14,9 @@ type ShortenRequest struct {
 
 func Shorten(c *gin.Context) {
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed33333",
+	logger2, _ := zap.NewDevelopment()
+	defer logger2.Sync()
+	logger2.Info("Request processed33333",
 		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
 	)
 
