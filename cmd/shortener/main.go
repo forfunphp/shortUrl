@@ -61,7 +61,6 @@ func gzipMiddleware() gin.HandlerFunc {
 
 		// Установка заголовка Content-Encoding
 		c.Writer.Header().Set("Content-Encoding", "gzip")
-		c.Writer.Header().Set("Content-Type", "gzip")
 
 		// Создание gzip.Writer
 		gw := gzip.NewWriter(c.Writer)
