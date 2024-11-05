@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
 	"log"
+
 	"shortUrl/internal/handlers"
 	"strings"
 	"time"
@@ -51,29 +53,17 @@ func (w *gzipResponseWriter) WriteString(s string) (int, error) {
 
 func gzipMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Проверка заголовка Accept-Encoding
-
-		logger, _ := zap.NewDevelopment()
-		defer logger.Sync()
-
-		logger.Info("Request processed33ffddd",
-			zap.String("method", c.Request.Method),
-			zap.String("path", c.ContentType()),
-			zap.String("Encoding", c.Request.Header.Get("Accept-Encoding")),
-			zap.Int("statusCode", c.Writer.Status()),
-		)
-
-		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
+		// Проверка заголовка Content-Encoding
+		if !strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
 			c.Next()
 			return
 		}
 
-		// Проверка типа контента
+		// Сохранение исходного Content-Type
+		originalContentType := c.Writer.Header().Get("Content-Type")
 
 		// Установка заголовка Content-Encoding
 		c.Writer.Header().Set("Content-Encoding", "gzip")
-
-		//originalContentType := c.Writer.Header().Get("Content-Type")
 
 		// Создание gzip.Writer
 		gw := gzip.NewWriter(c.Writer)
@@ -85,17 +75,21 @@ func gzipMiddleware() gin.HandlerFunc {
 			gzipWriter:     gw,
 		}
 
-		logger2, _ := zap.NewDevelopment()
-		defer logger2.Sync()
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
 
-		logger2.Info("Request processed33ff",
+		logger.Info("Request processed33ffddd",
 			zap.String("method", c.Request.Method),
 			zap.String("path", c.ContentType()),
+			zap.String("Encoding", c.Request.Header.Get("Accept-Encoding")),
 			zap.Int("statusCode", c.Writer.Status()),
 		)
 
 		// Вызов следующего обработчика
 		c.Next()
+
+		// Восстановление исходного Content-Type
+		c.Writer.Header().Set("Content-Type", originalContentType)
 
 		// Закрытие gzipWriter
 		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
