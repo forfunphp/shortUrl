@@ -57,6 +57,22 @@ func gzipMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// Проверка типа контента
+
+		// Установка заголовка Content-Encoding
+		c.Writer.Header().Set("Content-Encoding", "gzip")
+		c.Writer.Header().Set("Content-Type", "gzip")
+
+		// Создание gzip.Writer
+		gw := gzip.NewWriter(c.Writer)
+		defer gw.Close()
+
+		// Замена Writer на gzipResponseWriter
+		c.Writer = &gzipResponseWriter{
+			ResponseWriter: c.Writer,
+			gzipWriter:     gw,
+		}
+
 		logger, _ := zap.NewDevelopment()
 		defer logger.Sync()
 
@@ -66,31 +82,14 @@ func gzipMiddleware() gin.HandlerFunc {
 			zap.Int("statusCode", c.Writer.Status()),
 		)
 
-		// Проверка типа контента
-		if c.ContentType() == "application/json" || c.ContentType() == "text/html" {
-			// Установка заголовка Content-Encoding
-			c.Writer.Header().Set("Content-Encoding", "gzip")
+		// Вызов следующего обработчика
+		c.Next()
 
-			// Создание gzip.Writer
-			gw := gzip.NewWriter(c.Writer)
-			defer gw.Close()
-
-			// Замена Writer на gzipResponseWriter
-			c.Writer = &gzipResponseWriter{
-				ResponseWriter: c.Writer,
-				gzipWriter:     gw,
-			}
-
-			// Вызов следующего обработчика
-			c.Next()
-
-			// Закрытие gzipWriter
-			if gw, ok := c.Writer.(*gzipResponseWriter); ok {
-				gw.gzipWriter.Close()
-			}
-		} else {
-			c.Next()
+		// Закрытие gzipWriter
+		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
+			gw.gzipWriter.Close()
 		}
+
 	}
 }
 

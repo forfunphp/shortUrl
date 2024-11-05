@@ -39,7 +39,7 @@ func Shorten(c *gin.Context) {
 
 	jsonData, err := json.Marshal(resp)
 	if err != nil {
-		c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
