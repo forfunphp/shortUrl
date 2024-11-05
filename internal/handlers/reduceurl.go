@@ -1,16 +1,19 @@
 package handlers
 
 import (
+	"compress/gzip"
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
 	"net/url"
 	"shortUrl/config"
+	"strings"
 )
 
 type URLPair struct {
@@ -36,26 +39,33 @@ func init() {
 
 func ReduceURL(c *gin.Context) {
 
-	body, err := io.ReadAll(c.Request.Body)
+	body, err := readRequestBody(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
+		return
+	}
+
+	// Разбор URL
+	parsedURL, err := url.Parse(string(body))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный URL"})
+		return
+	}
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
 		return
 	}
 
-	URL := string(body)
-	parsedURL, err := url.Parse(URL)
-
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request xxxxx",
-		zap.String("fullURL", URL),
 		zap.String("fullURL", parsedURL.String()), // Добавляем полный URL
 		zap.Int("Status", c.Writer.Status()),      // Добавляем parsedURL
 	)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{URL + "error": "Не спарсил URL"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Не спарсил URL"})
 		return
 	}
 
@@ -90,6 +100,19 @@ func ReduceURL(c *gin.Context) {
 		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
+}
+
+func readRequestBody(c *gin.Context) ([]byte, error) {
+	if strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
+		reader, err := gzip.NewReader(c.Request.Body)
+		if err != nil {
+			return nil, err
+		}
+		defer reader.Close()
+		return ioutil.ReadAll(reader)
+	} else {
+		return io.ReadAll(c.Request.Body)
+	}
 }
 
 func reduceURL() string {
