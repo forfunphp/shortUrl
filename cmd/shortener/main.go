@@ -34,7 +34,6 @@ func main() {
 	defer logger.Sync()
 
 	router := gin.Default()
-
 	router.Use(gzipMiddleware())
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
