@@ -2,20 +2,33 @@ package main
 
 import (
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
-
 	"log"
-
+	"os"
+	"shortUrl/config"
 	"shortUrl/internal/handlers"
 	"strings"
 	"time"
 )
 
 var sugar zap.SugaredLogger
+var Cfg = config.NewConfig()
+
+type URLData struct {
+	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
+	ShortURL    string    `json:"short_url"`
+	OriginalURL string    `json:"original_url"`
+}
 
 func main() {
+
+	filePath := Cfg.EnvFilePath
+
+	loadURLsFromFile(filePath)
 
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
@@ -117,4 +130,26 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 			zap.Int("statusCode", c.Writer.Status()),
 		)
 	}
+}
+
+func saveURLsToFile(urls []URLData, fname string) error {
+	data, err := json.MarshalIndent(urls, "", " ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(fname, data, 0666)
+}
+
+func loadURLsFromFile(fname string) ([]URLData, error) {
+	data, err := os.ReadFile(fname)
+	if err != nil {
+		return nil, err // Возвращаем nil, чтобы указать, что данные не загружены
+	}
+
+	var urls []URLData
+	if err := json.Unmarshal(data, &urls); err != nil {
+		return nil, err // Возвращаем nil, чтобы указать, что данные не загружены
+	}
+
+	return urls, nil // Возвращаем urls, чтобы вернуть загруженные данные
 }

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"io"
 	"log"
@@ -20,11 +21,22 @@ type URLPair struct {
 	ShortURL string
 }
 
+type URLData struct {
+	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
+	ShortURL    string
+	OriginalURL *url.URL
+}
+
 type ShortURL struct {
 	ShortURL string `json:"result"`
 }
 
+type OriginalURL struct {
+	ShortURL string `json:"original_url"`
+}
+
 var URLMap = make(map[string]URLPair)
+var URLDat = make(map[string]URLData)
 var Cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -64,7 +76,8 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
-
+	newUUID := uuid.New()
+	URLDat[shortURL] = URLData{newUUID, shortURL, parsedURL}
 	contentType := c.Request.Header.Get("Content-Type")
 
 	logger, _ := zap.NewDevelopment()
