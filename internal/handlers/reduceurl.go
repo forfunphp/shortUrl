@@ -135,7 +135,6 @@ func saveURLsToFile(urls []URLData, fname string) error {
 
 		logger5.Info("Request processed33ffddd33",
 			zap.String("fname", fname),
-			zap.String("file", file),
 		)
 
 		return os.WriteFile(fname, data, 0666)
