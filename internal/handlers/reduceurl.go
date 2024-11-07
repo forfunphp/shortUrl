@@ -120,13 +120,6 @@ func saveURLsToFile(urls []URLData, fname string) error {
 		return err
 	}
 
-	logger5, _ := zap.NewDevelopment()
-	defer logger5.Sync()
-
-	logger5.Info("Request processed33ffddd",
-		zap.String("fname", fname),
-	)
-
 	// Проверка существования файла
 	_, err = os.Stat(fname)
 	if os.IsNotExist(err) {
@@ -136,6 +129,14 @@ func saveURLsToFile(urls []URLData, fname string) error {
 			return fmt.Errorf("не удалось создать файл %s: %w", fname, err)
 		}
 		defer file.Close()
+
+		logger5, _ := zap.NewDevelopment()
+		defer logger5.Sync()
+
+		logger5.Info("Request processed33ffddd33",
+			zap.String("fname", fname),
+			zap.String("file", file),
+		)
 
 		return os.WriteFile(fname, data, 0666)
 	} else if err != nil {
