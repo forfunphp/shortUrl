@@ -26,7 +26,7 @@ func (c *Config) Init() error {
 
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")
-	pflag.StringVarP(&c.EnvFilePath, "file-storage-path", "f", "urls.json", "Путь к файлу для хранения URL")
+	pflag.StringVarP(&c.EnvFilePath, "f", "f", "urls.json", "Путь к файлу для хранения URL")
 	pflag.Parse()
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
