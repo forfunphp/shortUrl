@@ -1,75 +1,145 @@
 package main
 
 import (
+	"compress/gzip"
+	"encoding/json"
 	"fmt"
-	"io"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"log"
-	"math/rand"
-	"net/http"
-	"net/url"
+	"os"
+	"shortUrl/config"
+	"shortUrl/internal/handlers"
 	"strings"
 	"time"
 )
 
-type URLPair struct {
-	Url      string
-	ShortURL string
-}
+var sugar zap.SugaredLogger
+var Cfg = config.NewConfig()
 
-var urlMap map[string]URLPair
-
-func reduceURL() string {
-	rand.Seed(time.Now().UnixNano())
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var shortURL string
-	for i := 0; i < 8; i++ {
-		randomIndex := rand.Intn(len(charset))
-		shortURL += string(charset[randomIndex])
-	}
-	return shortURL
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method == http.MethodPost {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Не спарсил тело запроса", http.StatusBadRequest)
-			return
-		}
-		URL := string(body)
-		fmt.Println(body)
-		fmt.Println(URL)
-		shortURL := reduceURL()
-		urlMap[shortURL] = URLPair{URL, shortURL}
-
-		w.WriteHeader(http.StatusCreated)
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "http://localhost:8080/%s", shortURL)
-	}
-
-	if r.Method == http.MethodGet {
-		u, _ := url.Parse(r.URL.Path)
-		parts := strings.Split(u.Path, "/")
-		shortURL := strings.Split(parts[1], "favicon.ico")
-
-		urlPair, ok := urlMap[shortURL[0]]
-		fmt.Println("Редирект")
-		fmt.Println(urlPair)
-		if !ok {
-			http.Error(w, "Нет урла", http.StatusBadRequest)
-			return
-		}
-		fmt.Println(urlPair.Url)
-		w.Header().Set("Location", urlPair.Url)
-		w.WriteHeader(http.StatusTemporaryRedirect)
-	}
-
+type URLData struct {
+	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
+	ShortURL    string    `json:"short_url"`
+	OriginalURL string    `json:"original_url"`
 }
 
 func main() {
-	urlMap = make(map[string]URLPair)
-	http.HandleFunc("/", Handler)
-	fmt.Println("Сервер запущен на http://localhost:8080/")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	filePath := Cfg.EnvFilePath
+
+	loadURLsFromFile(filePath)
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+
+	router := gin.Default()
+	router.Use(gzipMiddleware())
+	router.POST("/", WithLogging(handlers.ReduceURL))
+	router.GET("/:shortURL", WithLogging(handlers.Redirect))
+	router.POST("/api/shorten", WithLogging(handlers.Shorten))
+
+	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
+
+	colonIndex := strings.Index(handlers.Cfg.HTTPAddr, ":")
+	if colonIndex == -1 {
+		log.Fatalf("Неверный формат адреса: %s", handlers.Cfg.HTTPAddr)
+	}
+
+	port := handlers.Cfg.HTTPAddr[colonIndex:]
+	log.Fatal(router.Run(port))
+}
+
+type gzipResponseWriter struct {
+	gin.ResponseWriter
+	gzipWriter *gzip.Writer
+}
+
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.gzipWriter.Write(b)
+}
+
+func (w *gzipResponseWriter) WriteString(s string) (int, error) {
+	return w.gzipWriter.Write([]byte(s))
+}
+
+func gzipMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Проверка заголовка Content-Encoding
+		if !strings.Contains(c.Request.Header.Get("Content-Encoding"), "gzip") {
+			c.Next()
+			return
+		}
+
+		// Сохранение исходного Content-Type
+		originalContentType := c.Writer.Header().Get("Content-Type")
+		// Установка заголовка Content-Encoding
+		c.Writer.Header().Set("Content-Encoding", "gzip")
+
+		// Создание gzip.Writer
+		gw := gzip.NewWriter(c.Writer)
+		defer gw.Close()
+
+		// Замена Writer на gzipResponseWriter
+		c.Writer = &gzipResponseWriter{
+			ResponseWriter: c.Writer,
+			gzipWriter:     gw,
+		}
+
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+
+		logger.Info("Request processed33ffddd",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.ContentType()),
+			zap.String("Encoding", c.Request.Header.Get("Accept-Encoding")),
+			zap.Int("statusCode", c.Writer.Status()),
+		)
+
+		// Вызов следующего обработчика
+		c.Next()
+
+		// Восстановление исходного Content-Type
+		c.Writer.Header().Set("Content-Type", originalContentType)
+
+		// Закрытие gzipWriter
+		if gw, ok := c.Writer.(*gzipResponseWriter); ok {
+			gw.gzipWriter.Close()
+		}
+
+	}
+}
+
+func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+		start := time.Now()
+
+		h(c)
+
+		//  логи
+		duration := time.Since(start)
+		logger.Info("Request processed",
+			zap.String("method", c.Request.Method),
+			zap.String("path", c.Request.URL.Path),
+			zap.String("path", c.Request.URL.Path),
+			zap.Duration("duration", duration), // Получаем статус
+			zap.Int("statusCode", c.Writer.Status()),
+		)
+	}
+}
+
+func loadURLsFromFile(fname string) ([]URLData, error) {
+	data, err := os.ReadFile(fname)
+	if err != nil {
+		return nil, err // Возвращаем nil, чтобы указать, что данные не загружены
+	}
+
+	var urls []URLData
+	if err := json.Unmarshal(data, &urls); err != nil {
+		return nil, err // Возвращаем nil, чтобы указать, что данные не загружены
+	}
+
+	return urls, nil // Возвращаем urls, чтобы вернуть загруженные данные
 }
