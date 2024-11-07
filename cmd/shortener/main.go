@@ -130,38 +130,6 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 	}
 }
 
-func saveURLsToFile(urls []URLData, fname string) error {
-	data, err := json.MarshalIndent(urls, "", " ")
-	if err != nil {
-		return err
-	}
-
-	logger5, _ := zap.NewDevelopment()
-	defer logger5.Sync()
-
-	logger5.Info("Request processed33ffddd",
-		zap.String("fname", fname),
-	)
-
-	// Проверка существования файла
-	_, err = os.Stat(fname)
-	if os.IsNotExist(err) {
-		// Создание файла, если он не существует
-		file, err := os.Create(fname)
-		if err != nil {
-			return fmt.Errorf("не удалось создать файл %s: %w", fname, err)
-		}
-		defer file.Close()
-
-		return os.WriteFile(fname, data, 0666)
-	} else if err != nil {
-		return fmt.Errorf("не удалось получить доступ к файлу %s: %w", fname, err)
-	}
-
-	// Файл существует, записываем данные в него
-	return os.WriteFile(fname, data, 0666)
-}
-
 func loadURLsFromFile(fname string) ([]URLData, error) {
 	data, err := os.ReadFile(fname)
 	if err != nil {
