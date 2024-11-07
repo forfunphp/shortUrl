@@ -136,10 +136,10 @@ func saveURLsToFile(urls []URLData, fname string) error {
 		return err
 	}
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
+	logger5, _ := zap.NewDevelopment()
+	defer logger5.Sync()
 
-	logger.Info("Request processed33ffddd",
+	logger5.Info("Request processed33ffddd",
 		zap.String("fname", fname),
 	)
 
