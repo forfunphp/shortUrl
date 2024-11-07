@@ -29,6 +29,10 @@ func (c *Config) Init() error {
 	pflag.StringVarP(&c.EnvFilePath, "f", "f", "urls.json", "Путь к файлу для хранения URL")
 	pflag.Parse()
 
+	if os.Getenv("FILE_STORAGE_PATH") != "" {
+		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
+	}
+
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
 	if err != nil || port < 0 || port > 65535 {
 		return fmt.Errorf("недопустимый порт HTTP-сервера: %s", c.HTTPAddr)
