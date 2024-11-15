@@ -1,17 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"shortUrl/config"
 	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-
-	"shortUrl/internal/handlers"
 )
 
 func TestReduceURLHandler(t *testing.T) {
@@ -97,4 +98,49 @@ func TestRedirectHandler(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestShorten(t *testing.T) {
+	// Инициализируем конфигурацию
+	var Cfg = config.NewConfig()
+
+	// Создаем тестовый маршрутизатор
+	router := gin.Default()
+
+	// Зарегистрируем тестовый обработчик
+	router.POST("/shorten", ShortenHandler)
+
+	// Создаем тестовый запрос
+	reqBody := []byte(`{"url": "https://www.example.com"}`)
+	req, err := http.NewRequest(http.MethodPost, "/shorten", bytes.NewBuffer(reqBody))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Создаем тестовый сервер
+	w := httptest.NewRecorder()
+
+	// Обрабатываем тестовый запрос
+	router.ServeHTTP(w, req)
+
+	// Проверка кода ответа
+	assert.Equal(t, http.StatusCreated, w.Code, "Ожидаемый код ответа: 201 (StatusCreated)")
+
+	// Проверка тела ответа
+	body, err := ioutil.ReadAll(w.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var resp ShortURL
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Проверка ответа
+	assert.Equal(t, Cfg.BaseURL+"/shortURL", resp.ShortURL, "Проверка URL в ответе")
+
+	// Проверка URLMap
+	assert.Equal(t, URLPair{OriginalURL: &url.URL{Scheme: "https", Host: "www.example.com"}, ShortURL: "shortURL"}, URLMap["shortURL"], "Проверка URLMap")
 }

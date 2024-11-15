@@ -38,6 +38,7 @@ func main() {
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
+	router.GET("/ping", WithLogging(handlers.Ping))
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
 
