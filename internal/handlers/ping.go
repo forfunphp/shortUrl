@@ -1,16 +1,15 @@
-package main
+package handlers
 
 import (
 	"database/sql"
 	"flag"
-	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql" // Импорт драйвера MySQL
-	"go.uber.org/zap"
 )
 
 var db *sql.DB
@@ -24,6 +23,7 @@ func init() {
 	}
 	defer logger.Sync()
 
+	// Получаем DSN из переменной окружения или флага командной строки
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
