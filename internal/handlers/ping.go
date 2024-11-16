@@ -17,6 +17,13 @@ var err error
 
 func Ping(c *gin.Context) {
 
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed1ss",
+		zap.String("fullURL", 'dsn'), // Добавляем полный URL
+
+	)
+
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
@@ -24,12 +31,7 @@ func Ping(c *gin.Context) {
 		dsn = *dsnPtr
 	}
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed1ss",
-		zap.String("fullURL", dsn), // Добавляем полный URL
 
-	)
 
 	if dsn == "" {
 		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
