@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	HTTPAddr    string
-	BaseURL     string
-	EnvFilePath string
+	HTTPAddr     string
+	BaseURL      string
+	EnvFilePath  string
+	DATABASE_DSN string
 }
 
 func NewConfig() *Config {
@@ -23,10 +24,12 @@ func (c *Config) Init() error {
 	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
 	c.BaseURL = os.Getenv("BASE_URL")
 	c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
+	c.DATABASE_DSN = os.Getenv("DATABASE_DSN")
 
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")
 	pflag.StringVarP(&c.EnvFilePath, "f", "f", "urls.json", "Путь к файлу для хранения URL")
+	pflag.StringVarP(&c.DATABASE_DSN, "d", "d", "", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
