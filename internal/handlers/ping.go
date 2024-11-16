@@ -16,7 +16,7 @@ var db *sql.DB
 var logger *zap.Logger
 
 func Ping(c *gin.Context) {
-	c.String(http.StatusOK, "OK")
+
 	var err error
 	logger, err = zap.NewProduction()
 	if err != nil {
@@ -36,7 +36,7 @@ func Ping(c *gin.Context) {
 		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
 	}
 
-	db, err = sql.Open("mysql", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		logger.Fatal("Ошибка при подключении к базе данных", zap.Error(err))
 	}
