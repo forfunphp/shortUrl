@@ -116,7 +116,6 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 		start := time.Now()
 
 		h(c)
-
 		//  логи
 		duration := time.Since(start)
 		logger.Info("Request processed",
