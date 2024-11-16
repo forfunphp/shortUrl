@@ -20,7 +20,7 @@ func Ping(c *gin.Context) {
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
 	logger.Info("Request processed1ss",
-		zap.String("fullURL", 'dsn'), // Добавляем полный URL
+		zap.String("fullURL", "2222"), // Добавляем полный URL
 
 	)
 
@@ -30,8 +30,6 @@ func Ping(c *gin.Context) {
 		flag.Parse()
 		dsn = *dsnPtr
 	}
-
-
 
 	if dsn == "" {
 		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
