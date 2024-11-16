@@ -25,9 +25,7 @@ type URLData struct {
 }
 
 func main() {
-
 	filePath := Cfg.EnvFilePath
-
 	loadURLsFromFile(filePath)
 
 	logger, _ := zap.NewDevelopment()
@@ -38,7 +36,6 @@ func main() {
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
-	router.GET("/ping", WithLogging(handlers.Ping))
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
 
@@ -118,7 +115,6 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 		start := time.Now()
 
 		h(c)
-
 		//  логи
 		duration := time.Since(start)
 		logger.Info("Request processed",
