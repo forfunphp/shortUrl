@@ -15,7 +15,8 @@ import (
 var db *sql.DB
 var logger *zap.Logger
 
-func init() {
+func Ping(c *gin.Context) {
+
 	var err error
 	logger, err = zap.NewProduction()
 	if err != nil {
@@ -45,10 +46,8 @@ func init() {
 		logger.Fatal("Ошибка при проверке подключения к базе данных", zap.Error(err))
 	}
 	logger.Info("Подключение к базе данных установлено.")
-}
 
-func Ping(c *gin.Context) {
-	err := db.Ping()
+	err = db.Ping()
 	if err != nil {
 		logger.Error("Ошибка при проверке подключения к базе данных", zap.Error(err))
 		c.AbortWithError(http.StatusInternalServerError, err)
