@@ -25,7 +25,6 @@ type URLData struct {
 }
 
 func main() {
-
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
