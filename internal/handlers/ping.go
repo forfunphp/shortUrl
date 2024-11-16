@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"os"
@@ -15,12 +16,20 @@ var db *sql.DB
 var err error
 
 func Ping(c *gin.Context) {
+
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
 		flag.Parse()
 		dsn = *dsnPtr
 	}
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	logger.Info("Request processed1ss",
+		zap.String("fullURL", dsn), // Добавляем полный URL
+
+	)
 
 	if dsn == "" {
 		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
