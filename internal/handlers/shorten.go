@@ -3,11 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-	"log"
+
 	"net/http"
 	"net/url"
-	"os"
 )
 
 type ShortenRequest struct {
@@ -15,21 +13,6 @@ type ShortenRequest struct {
 }
 
 func Shorten(c *gin.Context) {
-
-	filePath := Cfg.EnvFilePath
-
-	dsn := os.Getenv("DATABASE_DSN")
-	_, err := NewPostgresStore(dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	logger2, _ := zap.NewDevelopment()
-	defer logger2.Sync()
-	logger2.Info("Request ccccccdddddd",
-		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("filePath", filePath),
-		zap.Error(err), // Добавляем полный URL
-	)
 
 	var req ShortenRequest
 	if err := c.BindJSON(&req); err != nil {
