@@ -17,7 +17,6 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
-
 	_, err = db.Exec(`
   CREATE TABLE short_urls23233 (
    id UUID PRIMARY KEY,
