@@ -23,12 +23,13 @@ func Shorten(c *gin.Context) {
 	}
 
 	dsn := os.Getenv("DATABASE_DSN")
-	_, err := NewPostgresStore(dsn)
+	//_, err := NewPostgresStore(dsn)
 
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request proce000eeeee03",
-		zap.Error(err),
+		zap.String("fname", dsn),
+		//zap.Error(err),
 	)
 
 	// Парсим URL из структуры запроса
