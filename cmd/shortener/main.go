@@ -34,10 +34,6 @@ func main() {
 	router := gin.Default()
 	router.Use(gzipMiddleware())
 
-	dsn := os.Getenv("DATABASE_DSN")
-	if dsn == "" {
-
-	}
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
