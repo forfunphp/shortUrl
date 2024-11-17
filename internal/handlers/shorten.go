@@ -3,9 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-	"os"
-
 	"net/http"
 	"net/url"
 )
@@ -21,16 +18,6 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный JSON"})
 		return
 	}
-
-	dsn := os.Getenv("DATABASE_DSN")
-	//_, err := NewPostgresStore(dsn)
-
-	logger2, _ := zap.NewDevelopment()
-	defer logger2.Sync()
-	logger2.Info("Request proce000eeeee03",
-		zap.String("fname", dsn),
-		//zap.Error(err),
-	)
 
 	// Парсим URL из структуры запроса
 	parsedURL, err := url.Parse(req.URL) // Используем req.Url
