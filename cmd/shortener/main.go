@@ -2,7 +2,9 @@ package main
 
 import (
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,6 +17,7 @@ import (
 	"time"
 )
 
+var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
@@ -26,21 +29,30 @@ type URLData struct {
 
 func main() {
 
-	db := Cfg.Databes
-	_, err := handlers.NewPostgresStore(db)
+	dsn := os.Getenv("DATABASE_DSN")
+	if dsn == "" {
+		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+		flag.Parse()
+		dsn = *dsnPtr
+	}
 
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request proce00003",
-		zap.String("fullURL", db), // Добавляем полный URL
-		zap.Error(err),            // Добавляем полный URL
+		zap.String("fullURL", dsn), // Добавляем полный URL
+		//zap.Error(err),            // Добавляем полный URL
 	)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
+	_, err := handlers.NewPostgresStore(dsn)
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
+	logger2.Info("Request dfdfdfff",
+
+		zap.Error(err), // Добавляем полный URL
+	)
 
 	router := gin.Default()
 	router.Use(gzipMiddleware())
