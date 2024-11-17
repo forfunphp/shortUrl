@@ -25,6 +25,17 @@ type URLData struct {
 }
 
 func main() {
+
+	db := Cfg.Databes
+	_, err := handlers.NewPostgresStore(db)
+
+	logger2, _ := zap.NewDevelopment()
+	defer logger2.Sync()
+	logger2.Info("Request proce00003",
+		zap.String("fullURL", db), // Добавляем полный URL
+		zap.Error(err),            // Добавляем полный URL
+	)
+
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
@@ -38,6 +49,8 @@ func main() {
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
 	router.GET("/ping", WithLogging(handlers.Ping))
+
+	//_, err := NewPostgresStore(dsn)
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
 
