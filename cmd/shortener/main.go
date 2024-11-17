@@ -4,7 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
+
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -29,14 +29,20 @@ type URLData struct {
 
 func main() {
 
+	logger2, _ := zap.NewDevelopment()
+
 	dsn := os.Getenv("DATABASE_DSN")
-	if dsn == "" {
-		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-		flag.Parse()
-		dsn = *dsnPtr
+	if dsn != "" {
+		_, err := handlers.NewPostgresStore(dsn)
+
+		logger, _ := zap.NewDevelopment()
+		defer logger.Sync()
+		logger2.Info("Request dfdfdfff",
+
+			zap.Error(err), // Добавляем полный URL
+		)
 	}
 
-	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request proce00003",
 		zap.String("fullURL", dsn), // Добавляем полный URL
@@ -45,14 +51,6 @@ func main() {
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
-
-	_, err := handlers.NewPostgresStore(dsn)
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger2.Info("Request dfdfdfff",
-
-		zap.Error(err), // Добавляем полный URL
-	)
 
 	router := gin.Default()
 	router.Use(gzipMiddleware())
