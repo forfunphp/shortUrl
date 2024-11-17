@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
+	"flag"
 
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -32,15 +33,20 @@ func main() {
 	logger2, _ := zap.NewDevelopment()
 
 	dsn := os.Getenv("DATABASE_DSN")
-	if dsn != "" {
+	if dsn == "" {
+		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+		flag.Parse()
+		dsn = *dsnPtr
+
 		_, err := handlers.NewPostgresStore(dsn)
 
 		logger, _ := zap.NewDevelopment()
 		defer logger.Sync()
-		logger2.Info("Request dfdfdfff",
+		logger2.Info("Request dfdfvvvdfff",
 
 			zap.Error(err), // Добавляем полный URL
 		)
+
 	}
 
 	defer logger2.Sync()
