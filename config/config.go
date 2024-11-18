@@ -24,7 +24,7 @@ func (c *Config) Init() error {
 	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
 	c.BaseURL = os.Getenv("BASE_URL")
 	c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
-	c.Databes = os.Getenv("DATABASE_URI")
+	c.Databes = os.Getenv("DATABASE_DSN")
 
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")

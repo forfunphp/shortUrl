@@ -40,17 +40,6 @@ func init() {
 	fmt.Println(df)
 }
 
-func initDatabase() error {
-	// Подключение к базе данных
-	Databes := Cfg.Databes
-	df := os.Getenv("DATABASE_DSN")
-	fmt.Println("Подключение к базе данных...")
-	fmt.Println(Databes)
-	fmt.Println(df)
-
-	return nil
-}
-
 func main() {
 
 	handlers.NewPostgresStore(Cfg.Databes)
