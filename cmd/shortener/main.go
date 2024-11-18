@@ -4,7 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
+	"net/url"
 
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -33,10 +33,12 @@ func main() {
 
 	dsn := os.Getenv("DATABASE_DSN")
 
-	if dsn == "" {
-		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-		flag.Parse()
-		dsn = *dsnPtr
+	params, err := parsePostgresDSN(dsn)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("Parsed parameters:", params)
+		log.Fatal(err)
 	}
 
 	if dsn != "" {
@@ -65,6 +67,28 @@ func main() {
 
 	port := handlers.Cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
+}
+
+func parsePostgresDSN(dsn string) (map[string]string, error) {
+	u, err := url.Parse(dsn)
+	if err != nil {
+		return nil, fmt.Errorf("invalid DSN: %w", err)
+	}
+
+	params := make(map[string]string)
+	params["host"] = u.Hostname()
+	params["port"] = u.Port()
+	params["user"] = u.User.Username()
+	params["password"], _ = u.User.Password() // Ignore error for password - ok to be absent
+
+	q := u.Query()
+	for k := range q {
+		params[k] = q.Get(k)
+	}
+
+	params["dbname"] = strings.TrimPrefix(u.Path, "/")
+
+	return params, nil
 }
 
 type gzipResponseWriter struct {

@@ -36,9 +36,9 @@ func (c *Config) Init() error {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
-	if os.Getenv("DATABASE_DSN") != "" {
-		c.Databes = os.Getenv("DATABASE_DSN")
-	}
+	//if os.Getenv("DATABASE_DSN") != "" {
+	//	c.Databes = os.Getenv("DATABASE_DSN")
+	//}
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
 	if err != nil || port < 0 || port > 65535 {
