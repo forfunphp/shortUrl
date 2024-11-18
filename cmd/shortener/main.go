@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"log"
 	"os"
@@ -31,47 +32,23 @@ type URLData struct {
 }
 
 func main() {
+	connStr := "user=postgres password=your_postgres_password dbname=postgres sslmode=disable"
 
-	dsn := os.Getenv("DATABASE_DSN")
-	if dsn == "" {
-
-		dsn = Cfg.Databes
-
-		fmt.Println("dsnfdsn", dsn)
-
-		db, err := sql.Open("postgres", dsn)
-		if err != nil {
-			fmt.Println("Ошибка при подключении к базе данных", zap.Error(err))
-		}
-		df, err := parsePostgresDSN(dsn)
-
-		fmt.Println("dsnfdsn", df)
-		fmt.Println("parsePostgresDSN", zap.Error(err))
-
-		defer db.Close()
-
-		err = db.Ping()
-		if err != nil {
-			fmt.Println("Ошибка при проверке подключения к базе данных", zap.Error(err))
-		}
+	_, err := db.Exec("CREATE DATABASE IF NOT EXISTS mydatabase")
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	if dsn == "" {
-		fmt.Println("DATABASE_DSN environment variable or -d flag is required.")
-	}
+	// Закрываем соединение с "postgres"
+	db.Close()
 
-	if dsn != "" {
-		db, err := sql.Open("postgres", dsn)
-		if err != nil {
-			logger.Fatal("Ошибка при подключении к базе данны11х", zap.Error(err))
-		}
-		defer db.Close()
-		if err != nil {
-			fmt.Println("Ошибка при подключении к базе данных22", zap.Error(err))
-		}
+	// Подключение к созданной базе данных
+	connStr = "user=postgres password=your_postgres_password dbname=mydatabase sslmode=disable" // Замените на ваши данные
+	db, err = sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	fmt.Println("dsn dsn222:", dsn)
+	defer db.Close()
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)

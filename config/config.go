@@ -24,12 +24,12 @@ func (c *Config) Init() error {
 	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
 	c.BaseURL = os.Getenv("BASE_URL")
 	c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
-	c.Databes = os.Getenv("DATABASE_DSN")
+	c.Databes = os.Getenv("DATABASE_URI")
 
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")
 	pflag.StringVarP(&c.EnvFilePath, "f", "f", "urls.json", "Путь к файлу для хранения URL")
-	pflag.StringVarP(&c.Databes, "database URI", "d", "", "Строка с адресом подключения к БД")
+	pflag.StringVarP(&c.Databes, "d", "", "localhost:5432", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
