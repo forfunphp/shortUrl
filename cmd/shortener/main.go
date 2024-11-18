@@ -32,6 +32,7 @@ type URLData struct {
 func main() {
 
 	dsn := Cfg.Databes
+	fmt.Println("dsn dsn:", dsn)
 
 	if dsn != "" {
 		handlers.NewPostgresStore(dsn)
