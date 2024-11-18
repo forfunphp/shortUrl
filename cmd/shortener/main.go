@@ -42,11 +42,14 @@ func main() {
 
 		db, err := sql.Open("postgres", dsn)
 		if err != nil {
-			logger.Fatal("Ошибка при подключении к базе данных", zap.Error(err))
+			fmt.Println("Ошибка при подключении к базе данных", zap.Error(err))
 		}
+
+		defer db.Close()
+
 		err = db.Ping()
 		if err != nil {
-			logger.Fatal("Ошибка при проверке подключения к базе данных", zap.Error(err))
+			fmt.Println("Ошибка при проверке подключения к базе данных", zap.Error(err))
 		}
 	}
 
