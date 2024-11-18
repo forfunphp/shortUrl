@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 type PostgresStore struct {
@@ -18,15 +19,24 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
+	logger5, _ := zap.NewDevelopment()
+	defer logger5.Sync()
+
+	logger5.Info("Request processed33ffddd",
+		zap.String("method", dsn),
+	)
+
 	defer db.Close()
 
-	_, err = db.Exec(`
-  CREATE TABLE short_urls23233 (
-   "id" INTEGER PRIMARY KEY,
-   short_url VARCHAR(255) UNIQUE NOT NULL,
-   long_url TEXT NOT NULL
-  )
- `)
+	_, err := db.Exec(`
+ CREATE TABLE movies (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(250) NOT NULL DEFAULT '',
+  created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  tags TEXT,
+  views INTEGER NOT NULL DEFAULT 0
+ )
+`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create table: %w", err)
 	}
