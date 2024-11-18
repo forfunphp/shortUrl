@@ -45,7 +45,7 @@ func initDatabase() error {
 	Databes := Cfg.Databes
 	df := os.Getenv("DATABASE_DSN")
 	fmt.Println("Подключение к базе данных...")
-	fmt.Println(Cfg.Databes)
+	fmt.Println(Databes)
 	fmt.Println(df)
 
 	return nil
