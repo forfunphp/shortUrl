@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
+	"os"
 )
 
 type PostgresStore struct {
@@ -19,11 +21,18 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
+	dsn := os.Getenv("DATABASE_DSN")
+	if dsn == "" {
+		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+		flag.Parse()
+		dsn = *dsnPtr
+	}
+
 	logger5, _ := zap.NewDevelopment()
 	defer logger5.Sync()
 
-	logger5.Info("Request processed33ffddd",
-		zap.String("method", dsn),
+	logger5.Info("Request processed33ffdd-----d",
+		zap.String("dsn", dsn),
 	)
 
 	defer db.Close()
