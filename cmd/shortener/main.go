@@ -46,8 +46,12 @@ func main() {
 
 			logger5.Info("Request processed33ffdd-----d")
 		} else {
+
+			logger44, _ := zap.NewDevelopment()
+			defer logger44.Sync()
+
 			fmt.Println("Parsed parameters:", params)
-			log.Fatal(err)
+
 		}
 	}
 
