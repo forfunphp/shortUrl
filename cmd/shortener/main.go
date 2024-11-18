@@ -4,7 +4,8 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"github.com/spf13/pflag"
+	"flag"
+
 	"net/url"
 
 	"fmt"
@@ -33,15 +34,16 @@ type URLData struct {
 func main() {
 
 	dsn := os.Getenv("DATABASE_DSN")
-
-	// Если переменная окружения пуста, пытаемся получить значение из флага командной строки
 	if dsn == "" {
-		dsnPtr := pflag.String("d", "", "Строка с адресом подключения к БД")
-		pflag.Parse()
+		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+		flag.Parse()
 		dsn = *dsnPtr
-
-		fmt.Println("dsn dsn:", dsn)
 	}
+
+	if dsn == "" {
+		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
+	}
+
 	fmt.Println("dsn dsn222:", dsn)
 
 	filePath := Cfg.EnvFilePath
