@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"log"
@@ -32,21 +33,12 @@ type URLData struct {
 }
 
 func main() {
-	connStr := "user=postgres password=your_postgres_password dbname=postgres sslmode=disable"
+	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+		`localhost`, `video`, `XXXXXXXX`, `video`)
 
-	_, err := db.Exec("CREATE DATABASE IF NOT EXISTS mydatabase")
+	db, err := sql.Open("pgx", ps)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Закрываем соединение с "postgres"
-	db.Close()
-
-	// Подключение к созданной базе данных
-	connStr = "user=postgres password=your_postgres_password dbname=mydatabase sslmode=disable" // Замените на ваши данные
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer db.Close()
 
