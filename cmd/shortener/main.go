@@ -41,6 +41,9 @@ func main() {
 		if err != nil {
 			fmt.Println("Ошибка при подключении к базе данных", zap.Error(err))
 		}
+		df, err := parsePostgresDSN(dsn)
+
+		fmt.Println("dsnfdsn", df)
 
 		defer db.Close()
 
