@@ -31,7 +31,7 @@ type URLData struct {
 
 func main() {
 
-	dsn := os.Getenv("DATABASE_DSN")
+	dsn := Cfg.Databes
 
 	if dsn != "" {
 		handlers.NewPostgresStore(dsn)
@@ -40,7 +40,11 @@ func main() {
 	if dsn == "" {
 		params, err := parsePostgresDSN(dsn)
 		if err != nil {
-			log.Fatal(err)
+
+			logger5, _ := zap.NewDevelopment()
+			defer logger5.Sync()
+
+			logger5.Info("Request processed33ffdd-----d")
 		} else {
 			fmt.Println("Parsed parameters:", params)
 			log.Fatal(err)
