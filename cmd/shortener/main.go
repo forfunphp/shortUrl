@@ -41,7 +41,7 @@ func main() {
 	}
 
 	if dsn == "" {
-		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
+		fmt.Println("DATABASE_DSN environment variable or -d flag is required.")
 	}
 
 	fmt.Println("dsn dsn222:", dsn)
