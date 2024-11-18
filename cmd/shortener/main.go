@@ -37,7 +37,7 @@ func main() {
 
 		dsn = Cfg.Databes
 
-		db, err := sql.Open("postgres", dsn)
+		db, err := sql.Open("postgres", "newvideo.db")
 		if err != nil {
 			fmt.Println("Ошибка при подключении к базе данных", zap.Error(err))
 		}
