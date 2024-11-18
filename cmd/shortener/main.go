@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
 
 	"net/url"
 
@@ -35,10 +34,8 @@ func main() {
 
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
-		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-		flag.Parse()
 
-		dsn = *dsnPtr
+		dsn = Cfg.Databes
 
 		db, err := sql.Open("postgres", dsn)
 		if err != nil {
