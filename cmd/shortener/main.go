@@ -36,7 +36,7 @@ func main() {
 	defer logger2.Sync()
 	logger2.Info("Request 23422222",
 
-		zap.String(df), // Добавляем полный URL
+		zap.String("filePath", df), /// Добавляем полный URL
 	)
 
 	dsn := os.Getenv("DATABASE_DSN")
