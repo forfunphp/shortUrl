@@ -31,6 +31,13 @@ type URLData struct {
 func main() {
 
 	logger2, _ := zap.NewDevelopment()
+	df := Cfg.Databes
+
+	defer logger2.Sync()
+	logger2.Info("Request 23422222",
+
+		zap.String(df), // Добавляем полный URL
+	)
 
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
