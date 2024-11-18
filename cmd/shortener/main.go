@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
+	"flag"
 
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,15 @@ func main() {
 
 	dsn := os.Getenv("DATABASE_DSN")
 
-	handlers.NewPostgresStore(dsn)
+	if dsn == "" {
+		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+		flag.Parse()
+		dsn = *dsnPtr
+	}
+
+	if dsn != "" {
+		handlers.NewPostgresStore(dsn)
+	}
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)

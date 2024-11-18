@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"database/sql"
-	"flag"
+
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
@@ -18,12 +18,6 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
-	}
-
-	if dsn == "" {
-		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-		flag.Parse()
-		dsn = *dsnPtr
 	}
 
 	logger5, _ := zap.NewDevelopment()
