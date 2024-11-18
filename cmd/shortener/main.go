@@ -44,6 +44,7 @@ func main() {
 		df, err := parsePostgresDSN(dsn)
 
 		fmt.Println("dsnfdsn", df)
+		fmt.Println("parsePostgresDSN", zap.Error(err))
 
 		defer db.Close()
 
@@ -55,6 +56,17 @@ func main() {
 
 	if dsn == "" {
 		fmt.Println("DATABASE_DSN environment variable or -d flag is required.")
+	}
+
+	if dsn != "" {
+		db, err := sql.Open("postgres", dsn)
+		if err != nil {
+			logger.Fatal("Ошибка при подключении к базе данны11х", zap.Error(err))
+		}
+		defer db.Close()
+		if err != nil {
+			fmt.Println("Ошибка при подключении к базе данных22", zap.Error(err))
+		}
 	}
 
 	fmt.Println("dsn dsn222:", dsn)
