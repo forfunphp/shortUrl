@@ -36,11 +36,7 @@ func main() {
 	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
 		`localhost`, `video`, `XXXXXXXX`, `video`)
 
-	db, err := sql.Open("pgx", ps)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
+	handlers.NewPostgresStore(ps)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
