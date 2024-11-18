@@ -33,16 +33,18 @@ func main() {
 
 	dsn := os.Getenv("DATABASE_DSN")
 
-	params, err := parsePostgresDSN(dsn)
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println("Parsed parameters:", params)
-		log.Fatal(err)
-	}
-
 	if dsn != "" {
 		handlers.NewPostgresStore(dsn)
+	}
+
+	if dsn == "" {
+		params, err := parsePostgresDSN(dsn)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			fmt.Println("Parsed parameters:", params)
+			log.Fatal(err)
+		}
 	}
 
 	filePath := Cfg.EnvFilePath
