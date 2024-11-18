@@ -32,6 +32,12 @@ type URLData struct {
 	OriginalURL string    `json:"original_url"`
 }
 
+func init() {
+	Databes := Cfg.Databes
+	fmt.Println("Инициализация приложения...")
+	fmt.Println(Databes)
+}
+
 func main() {
 
 	handlers.NewPostgresStore(Cfg.Databes)
