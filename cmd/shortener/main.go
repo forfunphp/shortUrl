@@ -18,6 +18,7 @@ import (
 	"time"
 )
 
+var logger *zap.Logger
 var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
@@ -45,15 +46,22 @@ func main() {
 		flag.Parse()
 		dsn = *dsnPtr
 
-		_, err := handlers.NewPostgresStore(dsn)
+		//_, err := handlers.NewPostgresStore(dsn)
 
-		logger, _ := zap.NewDevelopment()
-		defer logger.Sync()
-		logger2.Info("Request dfdfvvvdfff",
+	}
 
-			zap.Error(err), // Добавляем полный URL
-		)
+	if dsn == "" {
+		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
+	}
 
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		logger.Fatal("Ошибка при подключении к базе данных", zap.Error(err))
+	}
+
+	err = db.Ping()
+	if err != nil {
+		logger.Fatal("Ошибка при проверке подключения к базе данных", zap.Error(err))
 	}
 
 	filePath := Cfg.EnvFilePath
