@@ -27,8 +27,6 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		zap.String("dsn", dsn),
 	)
 
-	defer db.Close()
-
 	_, err = db.Exec(`
  CREATE TABLE movies (
   id SERIAL PRIMARY KEY,
