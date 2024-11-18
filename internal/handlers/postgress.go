@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
-	"os"
 )
 
 type PostgresStore struct {
@@ -21,7 +20,6 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
 		flag.Parse()
