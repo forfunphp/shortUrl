@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
+	"github.com/spf13/pflag"
 	"net/url"
 
 	"fmt"
@@ -31,35 +32,17 @@ type URLData struct {
 
 func main() {
 
-	dsn := Cfg.Databes
-	fmt.Println("dsn dsn:", dsn)
+	dsn := os.Getenv("DATABASE_DSN")
 
-	if dsn != "" {
-		handlers.NewPostgresStore(dsn)
-	}
-
-	u, err := url.Parse(dsn)
-
-	fmt.Println("Parsed Parsedsn:", u)
-	fmt.Println("Parsed err:", err)
-
+	// Если переменная окружения пуста, пытаемся получить значение из флага командной строки
 	if dsn == "" {
-		params, err := parsePostgresDSN(dsn)
-		if err != nil {
+		dsnPtr := pflag.String("d", "", "Строка с адресом подключения к БД")
+		pflag.Parse()
+		dsn = *dsnPtr
 
-			logger5, _ := zap.NewDevelopment()
-			defer logger5.Sync()
-
-			logger5.Info("Request processed33ffdd-----d")
-		} else {
-
-			logger44, _ := zap.NewDevelopment()
-			defer logger44.Sync()
-
-			fmt.Println("Parsed parameters:", params)
-
-		}
+		fmt.Println("dsn dsn:", dsn)
 	}
+	fmt.Println("dsn dsn222:", dsn)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
