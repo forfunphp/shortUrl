@@ -28,7 +28,7 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 
 	defer db.Close()
 
-	_, err := db.Exec(`
+	_, err = db.Exec(`
  CREATE TABLE movies (
   id SERIAL PRIMARY KEY,
   title VARCHAR(250) NOT NULL DEFAULT '',
