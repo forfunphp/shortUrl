@@ -32,13 +32,14 @@ func main() {
 
 	logger2, _ := zap.NewDevelopment()
 	df := Cfg.Databes
+	dsn := os.Getenv("DATABASE_DSN")
 
 	defer logger2.Sync()
 	logger2.Info("Request 23422222",
 		zap.String("filePath", df), /// Добавляем полный URL
+		zap.String("dsn", dsn),     /// Добавляем полный URL
 	)
 
-	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
 		flag.Parse()
@@ -54,12 +55,6 @@ func main() {
 		)
 
 	}
-
-	defer logger2.Sync()
-	logger2.Info("Request proce00003",
-		zap.String("fullURL", dsn), // Добавляем полный URL
-		//zap.Error(err),            // Добавляем полный URL
-	)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
