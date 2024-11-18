@@ -33,13 +33,8 @@ type URLData struct {
 }
 
 func main() {
-	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
-		`localhost`, `video`, `XXXXXXXX`, `video`)
 
-	df, err := handlers.NewPostgresStore(ps)
-
-	fmt.Println(df)
-	fmt.Println(err)
+	handlers.NewPostgresStore(Cfg.Databes)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)

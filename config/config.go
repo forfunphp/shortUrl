@@ -38,6 +38,7 @@ func (c *Config) Init() error {
 
 	if os.Getenv("DATABASE_DSN") != "" {
 		c.Databes = os.Getenv("DATABASE_DSN")
+
 	}
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
