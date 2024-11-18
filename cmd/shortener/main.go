@@ -37,7 +37,17 @@ func main() {
 	if dsn == "" {
 		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
 		flag.Parse()
+
 		dsn = *dsnPtr
+
+		db, err := sql.Open("postgres", dsn)
+		if err != nil {
+			logger.Fatal("Ошибка при подключении к базе данных", zap.Error(err))
+		}
+		err = db.Ping()
+		if err != nil {
+			logger.Fatal("Ошибка при проверке подключения к базе данных", zap.Error(err))
+		}
 	}
 
 	if dsn == "" {
