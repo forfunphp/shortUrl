@@ -36,7 +36,10 @@ func main() {
 	ps := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
 		`localhost`, `video`, `XXXXXXXX`, `video`)
 
-	handlers.NewPostgresStore(ps)
+	df, err := handlers.NewPostgresStore(ps)
+
+	fmt.Println(df)
+	fmt.Println(err)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
