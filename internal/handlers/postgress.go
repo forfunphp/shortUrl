@@ -22,7 +22,7 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 
 	_, err = db.Exec(`
   CREATE TABLE short_urls23233 (
-   id UUID PRIMARY KEY,
+   "id" INTEGER PRIMARY KEY,
    short_url VARCHAR(255) UNIQUE NOT NULL,
    long_url TEXT NOT NULL
   )
