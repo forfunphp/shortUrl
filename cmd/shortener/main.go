@@ -37,6 +37,11 @@ func main() {
 		handlers.NewPostgresStore(dsn)
 	}
 
+	u, err := url.Parse(dsn)
+
+	fmt.Println("Parsed Parsedsn:", u)
+	fmt.Println("Parsed err:", err)
+
 	if dsn == "" {
 		params, err := parsePostgresDSN(dsn)
 		if err != nil {
