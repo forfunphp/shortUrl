@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
 
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -31,38 +30,9 @@ type URLData struct {
 
 func main() {
 
-	logger2, _ := zap.NewDevelopment()
-	df := Cfg.Databes
 	dsn := os.Getenv("DATABASE_DSN")
 
-	defer logger2.Sync()
-	logger2.Info("Request 23422222",
-		zap.String("filePath", df), /// Добавляем полный URL
-		zap.String("dsn", dsn),     /// Добавляем полный URL
-	)
-
-	if dsn == "" {
-		dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-		flag.Parse()
-		dsn = *dsnPtr
-
-		//_, err := handlers.NewPostgresStore(dsn)
-
-	}
-
-	if dsn == "" {
-		log.Fatal("DATABASE_DSN environment variable or -d flag is required.")
-	}
-
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		logger.Fatal("Ошибка при подключении к базе данных", zap.Error(err))
-	}
-
-	err = db.Ping()
-	if err != nil {
-		logger.Fatal("Ошибка при проверке подключения к базе данных", zap.Error(err))
-	}
+	handlers.NewPostgresStore(dsn)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
