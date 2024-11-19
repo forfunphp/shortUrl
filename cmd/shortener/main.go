@@ -44,7 +44,7 @@ type URLData struct {
 }
 
 func main() {
-	fmt.Println('444444')
+	fmt.Println("ggggg")
 	fmt.Println(Cfg.Databes)
 
 	filePath := Cfg.EnvFilePath
