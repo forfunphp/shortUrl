@@ -4,7 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
+
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -43,23 +43,7 @@ type URLData struct {
 	OriginalURL string    `json:"original_url"`
 }
 
-func parseFlags() {
-
-	envDatabaseURI2 := os.Getenv("DATABASE_DSN")
-	envDatabaseURI := os.Getenv("DATABASE_URI")
-
-	fmt.Println("Значение флага -d:", Cfg.Databes)
-	fmt.Println("Инициализацияq")
-	fmt.Println(flagDatabaseURI)
-	fmt.Println(envDatabaseURI)
-	fmt.Println(envDatabaseURI2)
-
-}
-
 func main() {
-	dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
-	flag.Parse()
-	fmt.Println(dsnPtr)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
