@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
+	"flag"
 
 	"net/url"
 
@@ -26,21 +27,48 @@ var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
+var (
+	flagRunAddr  string
+	flagLogLevel string
+	// переменная будет содержать параметры соединения с СУБД
+	flagDatabaseURI string
+)
+
 type URLData struct {
 	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
 	ShortURL    string    `json:"short_url"`
 	OriginalURL string    `json:"original_url"`
 }
 
-func init() {
-	Databes := Cfg.Databes
-	df := os.Getenv("DATABASE_DSN")
-	fmt.Println("Инициализация приложения...")
-	fmt.Println(Databes)
-	fmt.Println(df)
+func parseFlags() {
+	flag.StringVar(&flagRunAddr, "a", ":8080", "address and port to run server")
+	flag.StringVar(&flagLogLevel, "l", "info", "log level")
+	// обрабатываем аргумент -d
+	flag.StringVar(&flagDatabaseURI, "d", "", "database URI")
+	flag.Parse()
+
+	if envRunAddr := os.Getenv("RUN_ADDR"); envRunAddr != "" {
+		flagRunAddr = envRunAddr
+	}
+	if envLogLevel := os.Getenv("LOG_LEVEL"); envLogLevel != "" {
+		flagLogLevel = envLogLevel
+	}
+	// обрабатываем переменную окружения DATABASE_URI
+	if envDatabaseURI := os.Getenv("DATABASE_URI"); envDatabaseURI != "" {
+		flagDatabaseURI = envDatabaseURI
+
+		fmt.Println("Инициализацияs")
+		fmt.Println(envDatabaseURI)
+
+	}
+
+	fmt.Println("Инициализацияq")
+	fmt.Println(flagDatabaseURI)
+
 }
 
 func main() {
+	parseFlags()
 
 	handlers.NewPostgresStore(Cfg.Databes)
 
