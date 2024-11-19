@@ -39,17 +39,13 @@ type URLData struct {
 
 func parseFlags() {
 
-	// обрабатываем переменную окружения DATABASE_URI
-	if envDatabaseURI := os.Getenv("DATABASE_URI"); envDatabaseURI != "" {
-		flagDatabaseURI = envDatabaseURI
-
-		fmt.Println("Инициализацияs")
-		fmt.Println(envDatabaseURI)
-
-	}
+	DATABASE_DSN := os.Getenv("DATABASE_DSN")
+	envDatabaseURI := os.Getenv("DATABASE_URI")
 
 	fmt.Println("Инициализацияq")
 	fmt.Println(flagDatabaseURI)
+	fmt.Println(envDatabaseURI)
+	fmt.Println(DATABASE_DSN)
 
 }
 
