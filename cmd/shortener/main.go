@@ -4,10 +4,6 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
-	"flag"
-
-	"net/url"
-
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,6 +11,7 @@ import (
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"log"
+	"net/url"
 	"os"
 	"shortUrl/config"
 	"shortUrl/internal/handlers"
@@ -41,10 +38,6 @@ type URLData struct {
 }
 
 func parseFlags() {
-
-	// обрабатываем аргумент -d
-	flag.StringVar(&flagDatabaseURI, "d", "", "database URI")
-	flag.Parse()
 
 	// обрабатываем переменную окружения DATABASE_URI
 	if envDatabaseURI := os.Getenv("DATABASE_URI"); envDatabaseURI != "" {
