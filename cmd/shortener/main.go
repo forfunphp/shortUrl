@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
+	"github.com/spf13/pflag"
 
 	"go.uber.org/zap"
 	"log"
@@ -24,6 +25,10 @@ var logger *zap.Logger
 var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
+
+type Config struct {
+	Databes string
+}
 
 var (
 	flagRunAddr  string
@@ -52,6 +57,13 @@ func parseFlags() {
 }
 
 func main() {
+	c := &Config{}
+
+	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
+	pflag.Parse()
+
+	fmt.Println("Значение флага -d:", c.Databes)
+
 	parseFlags()
 
 	filePath := Cfg.EnvFilePath
