@@ -4,12 +4,12 @@ import (
 	"compress/gzip"
 	"database/sql"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
-	"github.com/spf13/pflag"
 
 	"go.uber.org/zap"
 	"log"
@@ -57,14 +57,9 @@ func parseFlags() {
 }
 
 func main() {
-	c := &Config{}
-
-	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
-	pflag.Parse()
-
-	fmt.Println("Значение флага -d:", c.Databes)
-
-	parseFlags()
+	dsnPtr := flag.String("d", "", "MySQL DSN (database source name)")
+	flag.Parse()
+	fmt.Println(dsnPtr)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
