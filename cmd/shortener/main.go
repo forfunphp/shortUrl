@@ -63,8 +63,6 @@ func parseFlags() {
 func main() {
 	parseFlags()
 
-	handlers.NewPostgresStore(Cfg.Databes)
-
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
