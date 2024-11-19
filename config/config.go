@@ -24,7 +24,7 @@ func (c *Config) Init() error {
 	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
 	c.BaseURL = os.Getenv("BASE_URL")
 	c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
-	c.Databes = os.Getenv("DATABASE_DSN")
+	//c.Databes = os.Getenv("DATABASE_DSN")
 
 	pflag.StringVarP(&c.HTTPAddr, "http-addr", "a", "localhost:8080", "адрес прослушивания HTTP-сервера")
 	pflag.StringVarP(&c.BaseURL, "base-url", "b", "http://localhost:8080", "базовый адрес для сокращенных URL")
@@ -36,10 +36,10 @@ func (c *Config) Init() error {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
-	if os.Getenv("DATABASE_DSN") != "" {
-		c.Databes = os.Getenv("DATABASE_DSN")
+	//if os.Getenv("DATABASE_DSN") != "" {
+	//	c.Databes = os.Getenv("DATABASE_DSN")
 
-	}
+	//}
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
 	if err != nil || port < 0 || port > 65535 {

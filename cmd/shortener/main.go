@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
-	"github.com/spf13/pflag"
+
 	"go.uber.org/zap"
 	"log"
 	"net/url"
@@ -42,9 +42,6 @@ func parseFlags() {
 
 	envDatabaseURI2 := os.Getenv("DATABASE_DSN")
 	envDatabaseURI := os.Getenv("DATABASE_URI")
-
-	pflag.StringVarP(Cfg.Databes, "d", "d", "", "Строка с адресом подключения к БД")
-	pflag.Parse()
 
 	fmt.Println("Значение флага -d:", Cfg.Databes)
 	fmt.Println("Инициализацияq")
