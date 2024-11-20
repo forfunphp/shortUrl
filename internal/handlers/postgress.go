@@ -40,6 +40,8 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		return nil, fmt.Errorf("failed to create table: %w", err)
 	}
 
+	db.Close()
+
 	return &PostgresStore{db: db}, nil
 }
 

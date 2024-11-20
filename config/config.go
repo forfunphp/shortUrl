@@ -35,13 +35,38 @@ func (c *Config) Init() error {
 
 	fmt.Println(c.Databes)
 
-	// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
-	conn, err := sql.Open("pgx", c.Databes)
-	if err != nil {
-		return err
+
+	if c.Databes != "" {
+
+		// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
+		conn, err := sql.Open("pgx", c.Databes)
+		if err != nil {
+			fmt.Println('conn222')
+
+			return err
+		}
+
+		_, err = conn.Exec(`
+		 CREATE TABLE movies (
+		  id SERIAL PRIMARY KEY,
+		  title VARCHAR(250) NOT NULL DEFAULT '',
+		  created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+		  tags TEXT,
+		  views INTEGER NOT NULL DEFAULT 0
+		 )
+		`)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create table: %w", err)
+		}
+
+		conn.Close()
+
 	}
 
-	fmt.Println(conn)
+
+
+
+	fmt.Println('conn')
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
