@@ -58,7 +58,7 @@ func (c *Config) Init() error {
 		 )
 		`)
 		if err != nil {
-			fmt.Errorf("failed to create table: %w", err)
+
 			return nil
 
 		}
