@@ -41,6 +41,8 @@ func (c *Config) Init() error {
 		return err
 	}
 
+	fmt.Println(conn)
+
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
