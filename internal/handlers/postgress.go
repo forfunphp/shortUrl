@@ -27,21 +27,6 @@ func NewPostgresStore(dsn string) (*PostgresStore, error) {
 		zap.String("dsn", dsn),
 	)
 
-	_, err = db.Exec(`
- CREATE TABLE movies (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(250) NOT NULL DEFAULT '',
-  created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  tags TEXT,
-  views INTEGER NOT NULL DEFAULT 0
- )
-`)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create table: %w", err)
-	}
-
-	db.Close()
-
 	return &PostgresStore{db: db}, nil
 }
 

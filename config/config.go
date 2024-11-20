@@ -33,6 +33,7 @@ func (c *Config) Init() error {
 	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
+	fmt.Println("34t4tg4g444g4g")
 	fmt.Println(c.Databes)
 
 	if c.Databes != "" {
