@@ -1,6 +1,7 @@
 package config
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/spf13/pflag"
 	"net/url"
@@ -33,6 +34,12 @@ func (c *Config) Init() error {
 	pflag.Parse()
 
 	fmt.Println(c.Databes)
+
+	// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
+	conn, err := sql.Open("pgx", c.Databes)
+	if err != nil {
+		return err
+	}
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
