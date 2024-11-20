@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"compress/gzip"
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"encoding/json"
@@ -74,7 +75,13 @@ func ReduceURL(c *gin.Context) {
 		OriginalURL: parsedURL,
 	})
 
-	addURLsToDatabase(sql.Conn{}, urls)
+	db, err := sql.Open("postgres", Cfg.Databes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	addURLsToDatabase(db, urls)
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
 	contentType := c.Request.Header.Get("Content-Type")
