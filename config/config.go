@@ -35,7 +35,6 @@ func (c *Config) Init() error {
 
 	fmt.Println(c.Databes)
 
-
 	if c.Databes != "" {
 
 		// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
@@ -56,17 +55,16 @@ func (c *Config) Init() error {
 		 )
 		`)
 		if err != nil {
-			return nil, fmt.Errorf("failed to create table: %w", err)
+			fmt.Errorf("failed to create table: %w", err)
+			return nil
+
 		}
 
 		conn.Close()
 
 	}
 
-
-
-
-	fmt.Println('conn')
+	fmt.Println("conn2")
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
