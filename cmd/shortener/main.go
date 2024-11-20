@@ -71,6 +71,7 @@ func main() {
 
 	port := handlers.Cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
+
 }
 
 func parsePostgresDSN(dsn string) (map[string]string, error) {

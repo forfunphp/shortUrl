@@ -36,23 +36,25 @@ func (c *Config) Init() error {
 	fmt.Println("34t4tg4g444g4g")
 	fmt.Println(c.Databes)
 
+	if os.Getenv("FILE_STORAGE_PATH") != "" {
+		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
+	}
+
 	if c.Databes != "" {
 
 		// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
-		conn, err := sql.Open("pgx", c.Databes)
+		Conn, err := sql.Open("pgx", c.Databes)
 		if err != nil {
 			fmt.Println("conn222")
 
 			return err
 		}
 
-		_, err = conn.Exec(`
-		 CREATE TABLE movies (
-		  id SERIAL PRIMARY KEY,
-		  title VARCHAR(250) NOT NULL DEFAULT '',
-		  created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-		  tags TEXT,
-		  views INTEGER NOT NULL DEFAULT 0
+		_, err = Conn.Exec(`
+		CREATE TABLE urls (
+			  id SERIAL PRIMARY KEY,
+			  short_url VARCHAR(255) UNIQUE NOT NULL, -- Ограничение UNIQUE для уникальности коротких URL
+			  long_url TEXT NOT NULL		
 		 )
 		`)
 		if err != nil {
@@ -60,8 +62,6 @@ func (c *Config) Init() error {
 			return nil
 
 		}
-
-		conn.Close()
 
 	}
 

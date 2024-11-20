@@ -3,6 +3,7 @@ package handlers
 import (
 	"compress/gzip"
 	"crypto/rand"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -43,13 +44,6 @@ var Cfg = config.NewConfig()
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-func init() {
-	err := Cfg.Init()
-	if err != nil {
-		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
-	}
-}
-
 func ReduceURL(c *gin.Context) {
 
 	body, err := readRequestBody(c)
@@ -69,6 +63,7 @@ func ReduceURL(c *gin.Context) {
 
 	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
+	fmt.Println(sql.Conn{})
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
@@ -79,6 +74,7 @@ func ReduceURL(c *gin.Context) {
 		OriginalURL: parsedURL,
 	})
 
+	addURLsToDatabase(sql.Conn{}, urls)
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
 	contentType := c.Request.Header.Get("Content-Type")
@@ -96,6 +92,29 @@ func ReduceURL(c *gin.Context) {
 		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
+}
+
+func addURLsToDatabase(db *sql.DB, urls []URLData) error {
+	tx, err := db.BeginTx(context.Background(), nil) // Начинаем транзакцию
+	if err != nil {
+		return fmt.Errorf("не удалось начать транзакцию: %w", err)
+	}
+	defer tx.Rollback() // Откат транзакции в случае ошибки
+
+	stmt, err := tx.PrepareContext(context.Background(), `INSERT INTO urls (id, short_url, long_url) VALUES ($1, $2, $3)`)
+	if err != nil {
+		return fmt.Errorf("не удалось подготовить запрос: %w", err)
+	}
+	defer stmt.Close()
+
+	for _, urlData := range urls {
+		_, err = stmt.ExecContext(context.Background(), urlData.UUID, urlData.ShortURL, urlData.OriginalURL)
+		if err != nil {
+			return fmt.Errorf("не удалось выполнить запрос INSERT: %w", err)
+		}
+	}
+
+	return tx.Commit() // Фиксируем транзакцию
 }
 
 func saveURLsToFile(urls []URLData, fname string) error {
