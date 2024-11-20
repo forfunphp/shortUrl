@@ -41,7 +41,7 @@ func (c *Config) Init() error {
 		// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
 		conn, err := sql.Open("pgx", c.Databes)
 		if err != nil {
-			fmt.Println('conn222')
+			fmt.Println("conn222")
 
 			return err
 		}
