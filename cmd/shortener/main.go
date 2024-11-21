@@ -45,7 +45,7 @@ type URLData struct {
 
 func main() {
 	fmt.Println("ggggg")
-	fmt.Println(Cfg.Databes)
+	fmt.Println(handlers.Cfg.Databes)
 	fmt.Println("ggggg2g22")
 	fmt.Println(Cfg.Databes)
 

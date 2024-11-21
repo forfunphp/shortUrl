@@ -57,14 +57,9 @@ func (c *Config) Init() error {
 			  long_url TEXT NOT NULL		
 		 )
 		`)
-		if err != nil {
-
-			return nil
-
-		}
 
 	}
-
+	Conn.close()
 	fmt.Println("conn2")
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
