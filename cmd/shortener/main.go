@@ -8,8 +8,12 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/lib/pq"
+
 	"go.uber.org/zap"
 	"log"
+	"net/url"
 	"os"
 	"shortUrl/config"
 	"shortUrl/internal/handlers"
@@ -22,6 +26,17 @@ var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
+type Config struct {
+	Databes string
+}
+
+var (
+	flagRunAddr  string
+	flagLogLevel string
+	// переменная будет содержать параметры соединения с СУБД
+	flagDatabaseURI string
+)
+
 type URLData struct {
 	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
 	ShortURL    string    `json:"short_url"`
@@ -29,10 +44,10 @@ type URLData struct {
 }
 
 func main() {
-
-	dsn := os.Getenv("DATABASE_DSN")
-
-	handlers.NewPostgresStore(dsn)
+	fmt.Println("ggggg")
+	fmt.Println(handlers.Cfg.Databes)
+	fmt.Println("ggggg2g22")
+	fmt.Println(Cfg.Databes)
 
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
@@ -56,6 +71,29 @@ func main() {
 
 	port := handlers.Cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
+
+}
+
+func parsePostgresDSN(dsn string) (map[string]string, error) {
+	u, err := url.Parse(dsn)
+	if err != nil {
+		return nil, fmt.Errorf("invalid DSN: %w", err)
+	}
+
+	params := make(map[string]string)
+	params["host"] = u.Hostname()
+	params["port"] = u.Port()
+	params["user"] = u.User.Username()
+	params["password"], _ = u.User.Password() // Ignore error for password - ok to be absent
+
+	q := u.Query()
+	for k := range q {
+		params[k] = q.Get(k)
+	}
+
+	params["dbname"] = strings.TrimPrefix(u.Path, "/")
+
+	return params, nil
 }
 
 type gzipResponseWriter struct {

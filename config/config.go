@@ -32,12 +32,17 @@ func (c *Config) Init() error {
 	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
+	fmt.Println("34t4tg4g444g4g")
+	fmt.Println(c.Databes)
+
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
-	if os.Getenv("DATABASE_DSN") != "" {
-		c.Databes = os.Getenv("DATABASE_DSN")
+	fmt.Println("conn2")
+
+	if os.Getenv("FILE_STORAGE_PATH") != "" {
+		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
