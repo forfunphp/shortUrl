@@ -59,7 +59,7 @@ func (c *Config) Init() error {
 		`)
 
 	}
-	Conn.close()
+
 	fmt.Println("conn2")
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {

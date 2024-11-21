@@ -11,7 +11,6 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"io"
-	"log"
 	"math/big"
 	"net/http"
 	"net/url"
@@ -74,13 +73,7 @@ func ReduceURL(c *gin.Context) {
 		OriginalURL: parsedURL,
 	})
 
-	db, err := sql.Open("postgres", Cfg.Databes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	addURLsToDatabase(db, urls)
+	//addURLsToDatabase(db, urls)
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
 	contentType := c.Request.Header.Get("Content-Type")
