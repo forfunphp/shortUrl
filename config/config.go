@@ -1,7 +1,6 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/spf13/pflag"
 	"net/url"
