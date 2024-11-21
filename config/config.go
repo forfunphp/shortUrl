@@ -40,26 +40,6 @@ func (c *Config) Init() error {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
-	if c.Databes != "" {
-
-		// создаём соединение с СУБД PostgreSQL с помощью аргумента командной строки
-		Conn, err := sql.Open("pgx", c.Databes)
-		if err != nil {
-			fmt.Println("conn222")
-
-			return err
-		}
-
-		_, err = Conn.Exec(`
-		CREATE TABLE urls (
-			  id SERIAL PRIMARY KEY,
-			  short_url VARCHAR(255) UNIQUE NOT NULL, -- Ограничение UNIQUE для уникальности коротких URL
-			  long_url TEXT NOT NULL		
-		 )
-		`)
-
-	}
-
 	fmt.Println("conn2")
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
