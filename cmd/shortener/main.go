@@ -26,17 +26,6 @@ var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
-type Config struct {
-	Databes string
-}
-
-var (
-	flagRunAddr  string
-	flagLogLevel string
-	// переменная будет содержать параметры соединения с СУБД
-	flagDatabaseURI string
-)
-
 type URLData struct {
 	UUID        uuid.UUID `json:"uuid"` // Тип данных uuid.UUID
 	ShortURL    string    `json:"short_url"`
