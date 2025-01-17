@@ -33,13 +33,6 @@ type URLData struct {
 }
 
 func main() {
-	fmt.Println("ggggg")
-	fmt.Println(handlers.Cfg.Databes)
-	fmt.Println("ggggg2g22")
-	fmt.Println(Cfg.Databes)
-
-	filePath := Cfg.EnvFilePath
-	loadURLsFromFile(filePath)
 
 	router := gin.Default()
 	router.Use(gzipMiddleware())
