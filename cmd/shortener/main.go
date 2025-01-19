@@ -2,18 +2,12 @@ package main
 
 import (
 	"compress/gzip"
-	"database/sql"
 	"encoding/json"
-
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	_ "github.com/jackc/pgx/v5/stdlib"
-	_ "github.com/lib/pq"
-
 	"go.uber.org/zap"
 	"log"
-	"net/url"
 	"os"
 	"shortUrl/config"
 	"shortUrl/internal/handlers"
@@ -21,8 +15,6 @@ import (
 	"time"
 )
 
-var logger *zap.Logger
-var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
@@ -33,16 +25,18 @@ type URLData struct {
 }
 
 func main() {
+	filePath := Cfg.EnvFilePath
+	loadURLsFromFile(filePath)
+
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
 
 	router := gin.Default()
 	router.Use(gzipMiddleware())
-
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
 	router.GET("/ping", WithLogging(handlers.Ping))
-
-	//_, err := NewPostgresStore(dsn)
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
 
@@ -53,29 +47,6 @@ func main() {
 
 	port := handlers.Cfg.HTTPAddr[colonIndex:]
 	log.Fatal(router.Run(port))
-
-}
-
-func parsePostgresDSN(dsn string) (map[string]string, error) {
-	u, err := url.Parse(dsn)
-	if err != nil {
-		return nil, fmt.Errorf("invalid DSN: %w", err)
-	}
-
-	params := make(map[string]string)
-	params["host"] = u.Hostname()
-	params["port"] = u.Port()
-	params["user"] = u.User.Username()
-	params["password"], _ = u.User.Password() // Ignore error for password - ok to be absent
-
-	q := u.Query()
-	for k := range q {
-		params[k] = q.Get(k)
-	}
-
-	params["dbname"] = strings.TrimPrefix(u.Path, "/")
-
-	return params, nil
 }
 
 type gzipResponseWriter struct {
