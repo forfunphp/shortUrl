@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 )
@@ -12,6 +13,14 @@ type ShortenRequest struct {
 }
 
 func Shorten(c *gin.Context) {
+
+	filePath := Cfg.EnvFilePath
+	logger2, _ := zap.NewDevelopment()
+	defer logger2.Sync()
+	logger2.Info("Request processed33333",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("filePath", filePath),              // Добавляем полный URL
+	)
 
 	var req ShortenRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -41,6 +50,14 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	logger3, _ := zap.NewDevelopment()
+	defer logger3.Sync()
+	logger3.Info("Request processed1",
+		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
+		zap.String("parsedURL", string(jsonData)),     // Добавляем parsedURL
+	)
+	//fmt.Println(string(jsonData))
 
 	contentType := c.Request.Header.Get("Content-Type")
 	if contentType == "text/html" {
