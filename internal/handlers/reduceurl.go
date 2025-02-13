@@ -65,13 +65,6 @@ func ReduceURL(c *gin.Context) {
 		return
 	}
 
-	logger2, _ := zap.NewDevelopment()
-	defer logger2.Sync()
-	logger2.Info("Request xxxxx",
-		zap.String("fullURL", parsedURL.String()), // Добавляем полный URL
-		zap.Int("Status", c.Writer.Status()),      // Добавляем parsedURL
-	)
-
 	shortURL := reduceURL()
 	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
@@ -88,15 +81,6 @@ func ReduceURL(c *gin.Context) {
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
 	contentType := c.Request.Header.Get("Content-Type")
-
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-	logger.Info("Request processed1ss",
-		zap.String("fullURL", c.Request.URL.String()), // Добавляем полный URL
-		zap.String("parsedURL", parsedURL.String()),
-		zap.String("contentType", contentType),
-		zap.Int("Status", c.Writer.Status()), // Добавляем parsedURL
-	)
 
 	if contentType == "text/html" {
 		c.Data(http.StatusCreated, "text/html", []byte(Cfg.BaseURL+"/"+shortURL))

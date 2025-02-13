@@ -2,7 +2,9 @@ package main
 
 import (
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
+
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,6 +17,8 @@ import (
 	"time"
 )
 
+var logger *zap.Logger
+var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
@@ -25,18 +29,22 @@ type URLData struct {
 }
 
 func main() {
+
+	dsn := os.Getenv("DATABASE_DSN")
+
+	handlers.NewPostgresStore(dsn)
+
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
-	logger, _ := zap.NewDevelopment()
-	defer logger.Sync()
-
 	router := gin.Default()
 	router.Use(gzipMiddleware())
-	//router.POST("/", WithLogging(handlers.ReduceURL))
-	//router.GET("/:shortURL", WithLogging(handlers.Redirect))
-	//router.POST("/api/shorten", WithLogging(handlers.Shorten))
-	//router.GET("/ping", WithLogging(handlers.Ping))
+	router.POST("/", WithLogging(handlers.ReduceURL))
+	router.GET("/:shortURL", WithLogging(handlers.Redirect))
+	router.POST("/api/shorten", WithLogging(handlers.Shorten))
+	router.GET("/ping", WithLogging(handlers.Ping))
+
+	//_, err := NewPostgresStore(dsn)
 
 	fmt.Printf("Сервер запущен на %s\n", handlers.Cfg.HTTPAddr)
 
