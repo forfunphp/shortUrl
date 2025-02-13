@@ -23,7 +23,6 @@ func Ping(c *gin.Context) {
 		log.Fatalf("can't initialize logger: %v", err)
 	}
 	defer logger.Sync()
-
 	// Получаем DSN из переменной окружения или флага командной строки
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {

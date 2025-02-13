@@ -73,7 +73,6 @@ func ReduceURL(c *gin.Context) {
 	)
 
 	shortURL := reduceURL()
-
 	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 

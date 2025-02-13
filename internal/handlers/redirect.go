@@ -13,7 +13,7 @@ func Redirect(c *gin.Context) {
 	filePath := Cfg.EnvFilePath
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
-	logger2.Info("Request proce00003",
+	logger2.Info("Request proceju00003",
 		zap.String("fullURL", shortURL),  // Добавляем полный URL
 		zap.String("filePath", filePath), // Добавляем полный URL
 	)
