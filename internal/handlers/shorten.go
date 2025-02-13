@@ -18,7 +18,6 @@ func Shorten(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Некорректный JSON"})
 		return
 	}
-
 	// Парсим URL из структуры запроса
 	parsedURL, err := url.Parse(req.URL) // Используем req.Url
 

@@ -39,7 +39,6 @@ func main() {
 
 	router := gin.Default()
 	router.Use(gzipMiddleware())
-
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
