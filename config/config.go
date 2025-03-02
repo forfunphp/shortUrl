@@ -42,7 +42,7 @@ func (c *Config) Init() error {
 	}
 
 	if os.Getenv("DATABASE_DSN") != "" {
-		c.Databes = os.Getenv("DATABASE_DSN")
+		//	c.Databes = os.Getenv("DATABASE_DSN")
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
@@ -60,6 +60,7 @@ func (c *Config) Init() error {
 		}
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
+		log.Println(c.Databes)
 		log.Println("Переменная окружения DATABASE_DSN не установлена. Используется конфигурация по умолчанию (если есть).")
 	}
 
