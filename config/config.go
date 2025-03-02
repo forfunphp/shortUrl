@@ -1,11 +1,16 @@
 package config
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/spf13/pflag"
+	"log"
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 )
 
 type Config struct {
@@ -38,6 +43,23 @@ func (c *Config) Init() error {
 
 	if os.Getenv("DATABASE_DSN") != "" {
 		c.Databes = os.Getenv("DATABASE_DSN")
+
+		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
+		if err != nil {
+			log.Printf("не удалось открыть базу данных: %w", err) // Записываем ошибку в лог. Используем Printf вместо Fatalf
+			os.Exit(1)                                            // Явно завершаем работу после записи в лог
+		}
+		defer db.Close()
+
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+
+		if err := db.PingContext(ctx); err != nil {
+			log.Fatalf("не удалось подключиться к базе данных с DSN '%s': %w", c.Databes, err) // Здесь по-прежнему используем Fatalf, так как это критическая ошибка для программы
+		}
+		fmt.Println("Подключение к базе данных успешно!")
+	} else {
+		log.Println("Переменная окружения DATABASE_DSN не установлена. Используется конфигурация по умолчанию (если есть).")
 	}
 
 	port, err := strconv.Atoi(c.HTTPAddr[len(c.HTTPAddr)-4:])
