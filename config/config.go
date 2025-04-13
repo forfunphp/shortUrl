@@ -37,16 +37,13 @@ func (c *Config) Init() error {
 	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
-
-	
-
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-		log.Printf('3333333333333333')
+		log.Println("3333333333333333")
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
 			log.Printf("не удалось открыть базу данных: %v", err)
