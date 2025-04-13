@@ -51,7 +51,7 @@ func (c *Config) Init() error {
 			log.Printf("не удалось открыть базу данных: %v", err)
 		}
 
-		_, err := db.Exec(`
+		_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS short_urls (
 			short_code VARCHAR(255) PRIMARY KEY,
 			long_url TEXT NOT NULL
