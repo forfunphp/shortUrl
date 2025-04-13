@@ -38,7 +38,7 @@ func (c *Config) Init() error {
 	pflag.Parse()
 
 
-	log.Println('22222222222222222222222')
+	log.Print('22222222222222222222222')
 	log.Println(c.Databes)
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
