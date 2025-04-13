@@ -6,14 +6,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"shortUrl/config"
 )
 
 type ShortenRequest struct {
 	URL string `json:"url"`
 }
-
-var Cfg = config.NewConfig()
 
 func Shorten(c *gin.Context) {
 
