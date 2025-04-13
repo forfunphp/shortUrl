@@ -38,8 +38,7 @@ func (c *Config) Init() error {
 	pflag.Parse()
 
 
-	log.Print('22222222222222222222222')
-	log.Println(c.Databes)
+	
 
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
@@ -47,7 +46,7 @@ func (c *Config) Init() error {
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-		log.Print('3333333333333333')
+		log.Printf('3333333333333333')
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
 			log.Printf("не удалось открыть базу данных: %v", err)
