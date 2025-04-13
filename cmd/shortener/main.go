@@ -2,6 +2,7 @@ package main
 
 import (
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,17 @@ type URLData struct {
 func main() {
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
+
+	dbDSN := os.Getenv("DATABASE_DSN")
+	if dbDSN == "" {
+		log.Fatal("DATABASE_DSN environment variable not set")
+	}
+
+	db, err := sql.Open("postgres", dbDSN)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
 
 	logger, _ := zap.NewDevelopment()
 	defer logger.Sync()
