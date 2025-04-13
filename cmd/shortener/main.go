@@ -30,10 +30,6 @@ type URLData struct {
 
 func main() {
 
-	dsn := os.Getenv("DATABASE_DSN")
-
-	handlers.NewPostgresStore(dsn)
-
 	filePath := Cfg.EnvFilePath
 	loadURLsFromFile(filePath)
 
