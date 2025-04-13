@@ -46,8 +46,7 @@ func (c *Config) Init() error {
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
-			logMessage := fmt.Sprintf("не удалось открыть базу данных: %v", err)
-			fmt.Println(logMessage) // Or use logrus.Error(logMessage) if you want to stick with Logrus for logging
+			log.Printf("не удалось открыть базу данных: %v", err)
 		}
 
 		defer db.Close()
@@ -56,7 +55,7 @@ func (c *Config) Init() error {
 		defer cancel()
 
 		if err := db.PingContext(ctx); err != nil {
-			log.Fatalf("не удалось подключиться к базе данных с DSN '%s': %s", c.Databes, err.Error())
+			log.Printf("не удалось подключиться к базе данных с DSN '%s': %s", c.Databes, err.Error())
 		}
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
