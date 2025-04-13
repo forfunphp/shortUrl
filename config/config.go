@@ -60,6 +60,7 @@ func (c *Config) Init() error {
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
 		log.Println(c.Databes)
+		log.Println(c.EnvFilePath)
 		log.Println("Переменная окружения DATABASE_DSN не установлена. Используется конфигурация по умолчанию (если есть).")
 	}
 
