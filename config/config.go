@@ -37,6 +37,10 @@ func (c *Config) Init() error {
 	pflag.StringVarP(&c.Databes, "d", "d", "", "Строка с адресом подключения к БД")
 	pflag.Parse()
 
+
+	log.Println('22222222222222222222222')
+	log.Println(c.Databes)
+
 	if os.Getenv("FILE_STORAGE_PATH") != "" {
 		c.EnvFilePath = os.Getenv("FILE_STORAGE_PATH")
 	}
