@@ -52,11 +52,11 @@ func (c *Config) Init() error {
 		}
 
 		_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS short_urls (
-			short_code VARCHAR(255) PRIMARY KEY,
-			long_url TEXT NOT NULL
-		)
-	`)
+			CREATE TABLE IF NOT EXISTS short_urls (
+				short_code VARCHAR(255) PRIMARY KEY,
+				long_url TEXT NOT NULL
+			)
+		`)
 		if err != nil {
 			return fmt.Errorf("error creating table: %w", err)
 		}

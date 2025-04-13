@@ -52,6 +52,10 @@ func init() {
 
 func ReduceURL(c *gin.Context) {
 
+	if Cfg.Databes != "" {
+		log.Println("99999999999999999999999999999999")
+	}
+
 	body, err := readRequestBody(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
