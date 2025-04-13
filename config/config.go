@@ -44,9 +44,21 @@ func (c *Config) Init() error {
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
 		log.Println("3333333333333333")
+		log.Println("3333333333333333")
+
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
 			log.Printf("не удалось открыть базу данных: %v", err)
+		}
+
+		_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS short_urls (
+			short_code VARCHAR(255) PRIMARY KEY,
+			long_url TEXT NOT NULL
+		)
+	`)
+		if err != nil {
+			return fmt.Errorf("error creating table: %w", err)
 		}
 
 		defer db.Close()
