@@ -3,15 +3,25 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"net/url"
+	"shortUrl/config"
 )
 
 type ShortenRequest struct {
 	URL string `json:"url"`
 }
 
+var Cfg = config.NewConfig()
+
 func Shorten(c *gin.Context) {
+
+	log.Println("11111111122222223333333")
+
+	if Cfg.Databes != "" {
+		log.Println("9999444444444")
+	}
 
 	var req ShortenRequest
 	if err := c.BindJSON(&req); err != nil {
