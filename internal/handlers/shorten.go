@@ -37,7 +37,7 @@ func Shorten(c *gin.Context) {
 	if Cfg.Databes != "" {
 		_, err := db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
 		if err != nil {
-			fmt.Errorf("error saving to database: %w", err) // <-- Правильно: возвращаем строку и ошибку
+			return fmt.Errorf("error saving to database: %w", err)
 		}
 	}
 
