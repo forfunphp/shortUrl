@@ -56,6 +56,8 @@ func ReduceURL(c *gin.Context) {
 		log.Println("99999999999999999999999999999999")
 	}
 
+	log.Println("5666666666666")
+
 	body, err := readRequestBody(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Не удалось прочитать тело запроса"})
@@ -81,6 +83,13 @@ func ReduceURL(c *gin.Context) {
 		ShortURL:    shortURL,
 		OriginalURL: parsedURL,
 	})
+
+	if Cfg.Databes != "" {
+		_, err := db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			log.Printf("Error saving to database: %v", err)
+		}
+	}
 
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
