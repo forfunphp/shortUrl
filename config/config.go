@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -10,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Config struct {
@@ -61,14 +59,6 @@ func (c *Config) Init() error {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
-		defer db.Close()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-		defer cancel()
-
-		if err := db.PingContext(ctx); err != nil {
-			log.Printf("не удалось подключиться к базе данных с DSN '%s': %s", c.Databes, err.Error())
-		}
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
 		log.Println(c.Databes)
