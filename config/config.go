@@ -59,6 +59,15 @@ func (c *Config) Init() error {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
+		shortURL := "efwefwefe"
+		parsedURL := "esfwefwff2222222223"
+
+		_, err = db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			log.Println("3333333333")
+			log.Printf("Error saving to database: %v", err)
+		}
+
 		rows, err := db.Query("SELECT long_url FROM short_urls")
 		if err != nil {
 			log.Fatalf("Failed to execute query: %v", err)
