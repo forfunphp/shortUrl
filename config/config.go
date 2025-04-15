@@ -72,18 +72,22 @@ func (c *Config) Init() error {
 		if err != nil {
 			log.Fatalf("Failed to execute query: %v", err)
 		}
-		defer rows.Close() // Важно закрыть rows после использования
+		defer rows.Close()
 
-		// Перебираем результаты запроса
 		for rows.Next() {
 			var longURL string
-			err := rows.Scan(&longURL) // Записываем значение из текущей строки в longURL
+			err := rows.Scan(&longURL)
 			if err != nil {
-				log.Printf("Failed to scan row: %v", err) // log.Printf вместо log.Println для форматирования
-				continue                                  // Переходим к следующей строке, если произошла ошибка
+				log.Printf("Failed to scan row: %v", err)
+				continue // Продолжаем итерацию, даже если одна строка не прочитана
 			}
 
 			log.Println("3333333333333333", longURL)
+		}
+
+		// **Проверяем на ошибки после завершения цикла**
+		if err := rows.Err(); err != nil {
+			log.Fatalf("Error iterating through rows: %v", err)
 		}
 
 		fmt.Println("Подключение к базе данных успешно!")
