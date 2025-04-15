@@ -59,13 +59,22 @@ func (c *Config) Init() error {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
-		shortURL := "sdfsdf"
-		parsedURL := "http://zxpix.ru/an0ryjlrdks0/pdpdntjfvqfei"
-
-		_, err = db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
+		rows, err := db.Query("SELECT long_url FROM short_urls")
 		if err != nil {
-			log.Println("3333333333")
-			log.Printf("Error saving to database: %v", err)
+			log.Fatalf("Failed to execute query: %v", err)
+		}
+		defer rows.Close() // Важно закрыть rows после использования
+
+		// Перебираем результаты запроса
+		for rows.Next() {
+			var longURL string
+			err := rows.Scan(&longURL) // Записываем значение из текущей строки в longURL
+			if err != nil {
+				log.Printf("Failed to scan row: %v", err) // log.Printf вместо log.Println для форматирования
+				continue                                  // Переходим к следующей строке, если произошла ошибка
+			}
+
+			log.Println("3333333333333333", longURL)
 		}
 
 		fmt.Println("Подключение к базе данных успешно!")
