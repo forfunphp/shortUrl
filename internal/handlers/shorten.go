@@ -31,10 +31,15 @@ func Shorten(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	_, err = db.Exec("INSERT INTO short_urls (shortURL, parsedURL) VALUES ($1, $2)", shortURL, parsedURL)
-	if err != nil {
-		log.Println("111111111111111111")
-		log.Printf("Error saving to database: %v", err)
+	if Cfg.Databes != "" {
+
+		_, err = db.Exec("INSERT INTO short_urls (shortURL, parsedURL) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			log.Println("111111111111111111")
+			log.Printf("Error saving to database: %v", err)
+		}
+
+		db.Close()
 	}
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}

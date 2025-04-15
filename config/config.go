@@ -72,7 +72,7 @@ func (c *Config) Init() error {
 				log.Printf("Failed to scan row: %v", err)
 				continue // Продолжаем итерацию, даже если одна строка не прочитана
 			}
-			log.Println("3333333333333333", longURL)
+			log.Println("8888888888", longURL)
 		}
 
 		// **Проверяем на ошибки после завершения цикла**
