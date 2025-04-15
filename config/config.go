@@ -59,6 +59,15 @@ func (c *Config) Init() error {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
+		shortURL := "sdfsdf"
+		parsedURL := "http://zxpix.ru/an0ryjlrdks0/pdpdntjfvqfei"
+
+		_, err = db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			log.Println("3333333333")
+			log.Printf("Error saving to database: %v", err)
+		}
+
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
 		log.Println(c.Databes)
