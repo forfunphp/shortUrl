@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -15,10 +16,6 @@ type ShortenRequest struct {
 func Shorten(c *gin.Context) {
 
 	log.Println("11111111122222223333333")
-
-	if Cfg.Databes != "" {
-		log.Println("9999444444444")
-	}
 
 	var req ShortenRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -36,6 +33,13 @@ func Shorten(c *gin.Context) {
 	shortURL := reduceURL()
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
+
+	if Cfg.Databes != "" {
+		_, err := db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			fmt.Errorf("error saving to database: %w", err) // <-- Правильно: возвращаем строку и ошибку
+		}
+	}
 
 	var resp ShortURL                            // Инициализируем структуру ShortURL
 	resp.ShortURL = Cfg.BaseURL + "/" + shortURL // Заполняем поле ShortURL
