@@ -51,24 +51,15 @@ func (c *Config) Init() error {
 
 		_, err = db.Exec(`
 			CREATE TABLE IF NOT EXISTS short_urls (
-				short_code VARCHAR(255) PRIMARY KEY,
-				long_url TEXT NOT NULL
+				shortURL VARCHAR(255) PRIMARY KEY,
+				parsedURL TEXT NOT NULL
 			)
 		`)
 		if err != nil {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
-		shortURL := "efwefwefe"
-		parsedURL := "esfwefwff2222222223"
-
-		_, err = db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
-		if err != nil {
-			log.Println("3333333333")
-			log.Printf("Error saving to database: %v", err)
-		}
-
-		rows, err := db.Query("SELECT long_url FROM short_urls")
+		rows, err := db.Query("SELECT parsedURL FROM short_urls")
 		if err != nil {
 			log.Fatalf("Failed to execute query: %v", err)
 		}
