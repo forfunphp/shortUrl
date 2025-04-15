@@ -73,15 +73,6 @@ func ReduceURL(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	if Cfg.Databes != "" {
-		_, err := db.Exec("INSERT INTO short_urls (short_code, long_url) VALUES ($1, $2)", shortURL, parsedURL)
-		if err != nil {
-			log.Println("3333333333")
-			log.Printf("Error saving to database: %v", err)
-		}
-	}
-	defer db.Close()
-
 	fmt.Printf("lin2klink2link--->")
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
