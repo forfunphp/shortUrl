@@ -31,16 +31,6 @@ func Shorten(c *gin.Context) {
 
 	shortURL := reduceURL()
 
-	if Cfg.Databes != "" {
-
-		_, err = db.Exec("INSERT INTO short_urls (shortURL, parsedURL) VALUES ($1, $2)", shortURL, parsedURL)
-		if err != nil {
-			log.Println("111111111111111111")
-			log.Printf("Error saving to database: %v", err)
-		}
-
-	}
-
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
 	var resp ShortURL                            // Инициализируем структуру ShortURL

@@ -92,16 +92,13 @@ func (c *Config) Init() error {
 		return fmt.Errorf("недопустимый порт HTTP-сервера: %s", c.HTTPAddr)
 	}
 
-	parsedURL, err := url.Parse(c.BaseURL)
+	BaseURL, err := url.Parse(c.BaseURL)
 	if err != nil {
 		return fmt.Errorf("ошибка при парсинге базового URL: %w", err)
 	}
 
-	log.Println("f3333333")
-	log.Println(parsedURL)
-
-	if parsedURL.Port() != "" {
-		port, err = strconv.Atoi(parsedURL.Port())
+	if BaseURL.Port() != "" {
+		port, err = strconv.Atoi(BaseURL.Port())
 	}
 
 	if err != nil || port < 0 || port > 65535 {

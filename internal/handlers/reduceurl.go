@@ -85,6 +85,16 @@ func ReduceURL(c *gin.Context) {
 		OriginalURL: parsedURL,
 	})
 
+	if Cfg.Databes != "" {
+
+		_, err = db.Exec("INSERT INTO short_urls (shortURL, parsedURL) VALUES ($1, $2)", shortURL, parsedURL)
+		if err != nil {
+			log.Println("111111111111111111")
+			log.Printf("Error saving to database: %v", err)
+		}
+
+	}
+
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
 	contentType := c.Request.Header.Get("Content-Type")
