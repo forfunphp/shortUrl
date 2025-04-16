@@ -86,7 +86,6 @@ func ReduceURL(c *gin.Context) {
 	})
 
 	if Cfg.Databes != "" {
-
 		_, err = db.Exec("INSERT INTO short_urls (shortURL, parsedURL) VALUES ($1, $2)", shortURL, parsedURL)
 		if err != nil {
 			log.Println("111111111111111111")
