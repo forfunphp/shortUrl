@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -10,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"time"
 )
 
 type Config struct {
@@ -53,22 +51,35 @@ func (c *Config) Init() error {
 
 		_, err = db.Exec(`
 			CREATE TABLE IF NOT EXISTS short_urls (
-				short_code VARCHAR(255) PRIMARY KEY,
-				long_url TEXT NOT NULL
+				shortURL VARCHAR(255) PRIMARY KEY,
+				parsedURL TEXT NOT NULL
 			)
 		`)
 		if err != nil {
 			return fmt.Errorf("error creating table: %w", err)
 		}
 
-		defer db.Close()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-		defer cancel()
-
-		if err := db.PingContext(ctx); err != nil {
-			log.Printf("не удалось подключиться к базе данных с DSN '%s': %s", c.Databes, err.Error())
+		rows, err := db.Query("SELECT parsedURL FROM short_urls")
+		if err != nil {
+			log.Fatalf("Failed to execute query: %v", err)
 		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var longURL string
+			err := rows.Scan(&longURL)
+			if err != nil {
+				log.Printf("Failed to scan row: %v", err)
+				continue // Продолжаем итерацию, даже если одна строка не прочитана
+			}
+			log.Println("8888888888", longURL)
+		}
+
+		// **Проверяем на ошибки после завершения цикла**
+		if err := rows.Err(); err != nil {
+			log.Fatalf("Error iterating through rows: %v", err)
+		}
+
 		fmt.Println("Подключение к базе данных успешно!")
 	} else {
 		log.Println(c.Databes)
@@ -81,13 +92,13 @@ func (c *Config) Init() error {
 		return fmt.Errorf("недопустимый порт HTTP-сервера: %s", c.HTTPAddr)
 	}
 
-	parsedURL, err := url.Parse(c.BaseURL)
+	BaseURL, err := url.Parse(c.BaseURL)
 	if err != nil {
 		return fmt.Errorf("ошибка при парсинге базового URL: %w", err)
 	}
 
-	if parsedURL.Port() != "" {
-		port, err = strconv.Atoi(parsedURL.Port())
+	if BaseURL.Port() != "" {
+		port, err = strconv.Atoi(BaseURL.Port())
 	}
 
 	if err != nil || port < 0 || port > 65535 {
