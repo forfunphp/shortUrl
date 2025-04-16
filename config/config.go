@@ -97,6 +97,9 @@ func (c *Config) Init() error {
 		return fmt.Errorf("ошибка при парсинге базового URL: %w", err)
 	}
 
+	log.Println("f3333333")
+	log.Println(parsedURL)
+
 	if parsedURL.Port() != "" {
 		port, err = strconv.Atoi(parsedURL.Port())
 	}

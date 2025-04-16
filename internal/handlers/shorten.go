@@ -39,7 +39,6 @@ func Shorten(c *gin.Context) {
 			log.Printf("Error saving to database: %v", err)
 		}
 
-		db.Close()
 	}
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
@@ -64,6 +63,8 @@ func Shorten(c *gin.Context) {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	}
+
+	db.Close()
 
 	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
 
