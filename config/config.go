@@ -49,35 +49,32 @@ func (c *Config) Init() error {
 			log.Printf("не удалось открыть базу данных: %v", err)
 		}
 
-		_, err = db.Exec(`
-			CREATE TABLE IF NOT EXISTS short_urls (
-				shortURL VARCHAR(255) PRIMARY KEY,
-				parsedURL TEXT NOT NULL
-			)
-		`)
+		var tableExists bool
+		err = db.QueryRow(`
+  SELECT EXISTS (
+   SELECT 1
+   FROM   pg_catalog.pg_tables
+   WHERE  schemaname = 'public'
+   AND    tablename = 'short_urls'
+  );
+ `).Scan(&tableExists)
 		if err != nil {
-			return fmt.Errorf("error creating table: %w", err)
+			log.Fatalf("Failed to check table existence: %v", err)
 		}
 
-		rows, err := db.Query("SELECT parsedURL FROM short_urls")
-		if err != nil {
-			log.Fatalf("Failed to execute query: %v", err)
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var longURL string
-			err := rows.Scan(&longURL)
+		if tableExists {
+			log.Println("Table 'short_urls' already exists")
+		} else {
+			log.Println("Table 'short_urls' does not exist, creating it")
+			_, err = db.Exec(`
+   CREATE TABLE short_urls (
+    shortURL VARCHAR(255) PRIMARY KEY,
+    parsedURL TEXT NOT NULL
+   )
+  `)
 			if err != nil {
-				log.Printf("Failed to scan row: %v", err)
-				continue // Продолжаем итерацию, даже если одна строка не прочитана
+				log.Fatalf("Failed to create table: %v", err)
 			}
-			log.Println("8888888888", longURL)
-		}
-
-		// **Проверяем на ошибки после завершения цикла**
-		if err := rows.Err(); err != nil {
-			log.Fatalf("Error iterating through rows: %v", err)
 		}
 
 		fmt.Println("Подключение к базе данных успешно!")
