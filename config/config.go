@@ -41,7 +41,7 @@ func (c *Config) Init() error {
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-		log.Println("3333333333333333")
+		log.Println("333333333333333332")
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
@@ -50,13 +50,13 @@ func (c *Config) Init() error {
 
 		var tableExists bool
 		err = db.QueryRow(`
-  SELECT EXISTS (
-   SELECT 1
-   FROM   pg_catalog.pg_tables
-   WHERE  schemaname = 'public'
-   AND    tablename = 'short_urls'
-  );
- `).Scan(&tableExists)
+		  SELECT EXISTS (
+		   SELECT 1
+		   FROM   pg_catalog.pg_tables
+		   WHERE  schemaname = 'public'
+		   AND    tablename = 'short_urls'
+		  );
+		 `).Scan(&tableExists)
 		if err != nil {
 			log.Fatalf("Failed to check table existence: %v", err)
 		}
@@ -66,11 +66,12 @@ func (c *Config) Init() error {
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
 			_, err = db.Exec(`
-   CREATE TABLE short_urls (
-    shortURL VARCHAR(255) PRIMARY KEY,
-    parsedURL TEXT NOT NULL
-   )
-  `)
+			   CREATE TABLE short_urls (
+				id UUID PRIMARY KEY,
+				shortURL VARCHAR(255) NOT NULL,
+				parsedURL TEXT NOT NULL
+			   )
+			  `)
 			if err != nil {
 				log.Fatalf("Failed to create table: %v", err)
 			}
