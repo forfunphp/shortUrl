@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"compress/gzip"
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"encoding/json"
@@ -51,6 +52,48 @@ func init() {
 	}
 }
 
+func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			// Паника! Откатываем транзакцию
+			log.Printf("Паника! Откат транзакции: %v", p)
+			if err := tx.Rollback(); err != nil {
+				log.Printf("Ошибка при откате транзакции: %v", err)
+			}
+			panic(p) // Перебрасываем панику дальше
+		} else if err != nil {
+			// Ошибка! Откатываем транзакцию
+			log.Printf("Ошибка! Откат транзакции: %v", err)
+			if err := tx.Rollback(); err != nil {
+				log.Printf("Ошибка при откате транзакции: %v", err)
+			}
+		} else {
+			// Успех! Фиксируем транзакцию
+			if err := tx.Commit(); err != nil {
+				log.Printf("Ошибка при фиксации транзакции: %v", err)
+				if err := tx.Rollback(); err != nil { // Попытка отката при ошибке коммита
+					log.Printf("Ошибка при откате транзакции после ошибки коммита: %v", err)
+				}
+
+			}
+		}
+
+	}()
+
+	id := uuid.New()
+	_, err = tx.ExecContext(ctx, "INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", id, shortURL, parsedURL)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func ReduceURL(c *gin.Context) {
 
 	if Cfg.Databes != "" {
@@ -79,27 +122,23 @@ func ReduceURL(c *gin.Context) {
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
+	db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
+	if err != nil {
+		log.Printf("не удалось открыть базу данных: %v", err)
+	}
+
+	insertShortURL(db, shortURL, parsedURL.String())
+
+	//if Cfg.Databes != "" {
+
+	//}
+
 	var urls []URLData
 	urls = append(urls, URLData{
 		UUID:        uuid.New(),
 		ShortURL:    shortURL,
 		OriginalURL: parsedURL,
 	})
-
-	//if Cfg.Databes != "" {
-
-	db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
-	if err != nil {
-		log.Printf("не удалось открыть базу данных: %v", err)
-	}
-
-	_, err = db.Exec("INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", uuid.New(), shortURL, parsedURL)
-	if err != nil {
-		log.Println("111111131111e31111111")
-		log.Printf("Error saving to database: %v", err)
-	}
-	defer db.Close()
-	//}
 
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
