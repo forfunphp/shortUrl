@@ -95,7 +95,7 @@ func ReduceURL(c *gin.Context) {
 
 	_, err = db.Exec("INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", uuid.New(), shortURL, parsedURL)
 	if err != nil {
-		log.Println("111111111111111111")
+		log.Println("111111131111e31111111")
 		log.Printf("Error saving to database: %v", err)
 	}
 	defer db.Close()

@@ -101,7 +101,7 @@ func (c *Config) Init() error {
 				log.Println("Вывод данных завершен.")
 			}
 
-			log.Println("Table 'short_urls' already exists")
+			log.Println("Table 'short_urls' already exists1")
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
 			_, err = db.Exec(`
