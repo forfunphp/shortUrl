@@ -93,6 +93,12 @@ func (c *Config) Init() error {
 				}
 
 				log.Println(row) // Вывод всей строки
+
+				if err = rows.Err(); err != nil {
+					log.Fatal(err)
+				}
+
+				log.Println("Вывод данных завершен.")
 			}
 
 			log.Println("Table 'short_urls' already exists")
