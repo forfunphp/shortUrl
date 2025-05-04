@@ -62,6 +62,39 @@ func (c *Config) Init() error {
 		}
 
 		if tableExists {
+
+			rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+
+			columns, err := rows.Columns()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for rows.Next() {
+				values := make([]interface{}, len(columns))
+				scanArgs := make([]interface{}, len(columns))
+				for i := range values {
+					scanArgs[i] = &values[i]
+				}
+
+				err = rows.Scan(scanArgs...)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				row := make(map[string]interface{})
+				for i, col := range columns {
+					val := scanArgs[i].(*interface{})
+					row[col] = *val
+				}
+
+				log.Println(row) // Вывод всей строки
+			}
+
 			log.Println("Table 'short_urls' already exists")
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")

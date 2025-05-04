@@ -3,6 +3,7 @@ package handlers
 import (
 	"compress/gzip"
 	"crypto/rand"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -85,14 +86,20 @@ func ReduceURL(c *gin.Context) {
 		OriginalURL: parsedURL,
 	})
 
-	//if Cfg.Databes != "" {
-	_, err = db.Exec("INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", uuid.New(), shortURL, parsedURL)
-	if err != nil {
-		log.Println("111111111111111111")
-		log.Printf("Error saving to database: %v", err)
-	}
+	if Cfg.Databes != "" {
 
-	//}
+		db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
+		if err != nil {
+			log.Printf("не удалось открыть базу данных: %v", err)
+		}
+
+		_, err = db.Exec("INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", uuid.New(), shortURL, parsedURL)
+		if err != nil {
+			log.Println("111111111111111111")
+			log.Printf("Error saving to database: %v", err)
+		}
+		defer db.Close()
+	}
 
 	filePath := Cfg.EnvFilePath
 	saveURLsToFile(urls, filePath)
