@@ -164,7 +164,8 @@ func loadURLsFromDB(db *sql.DB) ([]URLData, error) {
 
 	for rows.Next() {
 		var urlData URLData
-		var id, shortURL, parsedURL string                            // Создаем переменные для сканирования
+		var id uuid.UUID
+		var shortURL, parsedURL string                                // Создаем переменные для сканирования
 		if err := rows.Scan(&id, &shortURL, &parsedURL); err != nil { // Сканируем в отдельные переменные
 			return nil, fmt.Errorf("ошибка при сканировании строки: %w", err)
 		}
