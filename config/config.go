@@ -93,9 +93,15 @@ func (c *Config) Init() error {
 				}
 
 				log.Println(row) // Вывод всей строки
+
+				if err = rows.Err(); err != nil {
+					log.Fatal(err)
+				}
+
+				log.Println("Вывод данных завершен.")
 			}
 
-			log.Println("Table 'short_urls' already exists")
+			log.Println("Table 'short_urls' already exists1")
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
 			_, err = db.Exec(`
