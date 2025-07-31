@@ -38,6 +38,7 @@ func main() {
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
+	router.POST("/api/shorten/batch", WithLogging(handlers.Batch))
 	router.GET("/ping", WithLogging(handlers.Ping))
 
 	//_, err := NewPostgresStore(dsn)
@@ -133,6 +134,12 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 }
 
 func loadURLsFromFile(fname string) ([]URLData, error) {
+
+	if Cfg.Databes != "" {
+		loadURLsFromDB(db)
+
+	}
+
 	data, err := os.ReadFile(fname)
 	if err != nil {
 		return nil, err // Возвращаем nil, чтобы указать, что данные не загружены
@@ -144,4 +151,32 @@ func loadURLsFromFile(fname string) ([]URLData, error) {
 	}
 
 	return urls, nil // Возвращаем urls, чтобы вернуть загруженные данные
+}
+
+func loadURLsFromDB(db *sql.DB) ([]URLData, error) {
+	rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
+	if err != nil {
+		return nil, fmt.Errorf("ошибка при выполнении запроса: %w", err)
+	}
+	defer rows.Close()
+
+	var urls []URLData
+
+	for rows.Next() {
+		var urlData URLData
+		var id, shortURL, parsedURL string                            // Создаем переменные для сканирования
+		if err := rows.Scan(&id, &shortURL, &parsedURL); err != nil { // Сканируем в отдельные переменные
+			return nil, fmt.Errorf("ошибка при сканировании строки: %w", err)
+		}
+		urlData.UUID = id // Заполняем поля структуры
+		urlData.ShortURL = shortURL
+		urlData.OriginalURL = parsedURL
+		urls = append(urls, urlData)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("ошибка после итерации по строкам: %w", err)
+	}
+
+	return urls, nil
 }

@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"io"
 	"log"
@@ -86,9 +89,27 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 	}()
 
 	id := uuid.New()
-	_, err = tx.ExecContext(ctx, "INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", id, shortURL, parsedURL)
+	_, err = tx.ExecContext(ctx, `
+  INSERT INTO short_urls (id, shortURL, parsedURL)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (parsedURL) DO NOTHING
+ `, id, shortURL, parsedURL)
+
 	if err != nil {
-		return err
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == pgerrcode.UniqueViolation {
+				// Конфликт уникальности parsedURL.
+				return fmt.Errorf("parsedURL already exists: %w", err)
+			} else {
+				// Другая ошибка базы данных.
+				log.Printf("Ошибка базы данных: %v", err)
+				return fmt.Errorf("database error: %w", err)
+			}
+		} else {
+			log.Printf("Неизвестная ошибка: %v", err)
+			return fmt.Errorf("unknown error: %w", err)
+		}
 	}
 
 	return nil
