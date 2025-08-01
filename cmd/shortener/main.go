@@ -164,13 +164,19 @@ func loadURLsFromDB(db *sql.DB) ([]URLData, error) {
 
 	for rows.Next() {
 		var urlData URLData
-		var id, shortURL, parsedURL string                            // Создаем переменные для сканирования
+		var id uuid.UUID
+		var shortURL, parsedURL string                                // Создаем переменные для сканирования
 		if err := rows.Scan(&id, &shortURL, &parsedURL); err != nil { // Сканируем в отдельные переменные
 			return nil, fmt.Errorf("ошибка при сканировании строки: %w", err)
 		}
 		urlData.UUID = id // Заполняем поля структуры
 		urlData.ShortURL = shortURL
 		urlData.OriginalURL = parsedURL
+
+		log.Println("77777777777777777777")
+		log.Println(shortURL)
+		log.Println(parsedURL)
+
 		urls = append(urls, urlData)
 	}
 
