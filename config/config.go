@@ -63,7 +63,7 @@ func (c *Config) Init() error {
 
 		if tableExists {
 
-			log.Println('1111111111112222222') // Вывод всей строки
+			log.Println("1111111111112222222") // Вывод всей строки
 
 			rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
 			if err != nil {
@@ -76,7 +76,7 @@ func (c *Config) Init() error {
 				log.Fatal(err)
 			}
 
-			log.Println('22222222223333333333333') // Вывод всей строки
+			log.Println("22222222223333333333333") // Вывод всей строки
 
 			for rows.Next() {
 				values := make([]interface{}, len(columns))
