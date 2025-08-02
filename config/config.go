@@ -85,6 +85,8 @@ func (c *Config) Init() error {
 					scanArgs[i] = &values[i]
 				}
 
+				log.Println(values) // Вывод всей строки
+
 				err = rows.Scan(scanArgs...)
 				if err != nil {
 					log.Fatal(err)
