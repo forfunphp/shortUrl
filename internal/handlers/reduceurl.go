@@ -96,6 +96,14 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
  `, id, shortURL, parsedURL)
 
 	if err != nil {
+
+		err = tx.Commit()
+		if err != nil {
+			// Обработка ошибки фиксации транзакции
+			log.Printf("Error committing transaction: %v", err)
+
+		}
+
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == pgerrcode.UniqueViolation {

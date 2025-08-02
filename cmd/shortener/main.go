@@ -19,7 +19,7 @@ import (
 
 var logger *zap.Logger
 
-// var db *sql.DB
+var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
