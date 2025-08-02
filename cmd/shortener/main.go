@@ -18,7 +18,8 @@ import (
 )
 
 var logger *zap.Logger
-var db *sql.DB
+
+// var db *sql.DB
 var sugar zap.SugaredLogger
 var Cfg = config.NewConfig()
 
@@ -135,10 +136,9 @@ func WithLogging(h gin.HandlerFunc) gin.HandlerFunc {
 
 func loadURLsFromFile(fname string) ([]URLData, error) {
 
-	if Cfg.Databes != "" {
-		loadURLsFromDB(db)
-
-	}
+	//if Cfg.Databes != "" {
+	//	loadURLsFromDB(db)
+	//}
 
 	data, err := os.ReadFile(fname)
 	if err != nil {

@@ -69,7 +69,7 @@ func (c *Config) Init() error {
 			if err != nil {
 				log.Fatal(err)
 			}
-			defer rows.Close()
+			//defer rows.Close()
 
 			columns, err := rows.Columns()
 			if err != nil {
