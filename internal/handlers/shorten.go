@@ -8,6 +8,10 @@ import (
 	"net/url"
 )
 
+type ShortenRequest struct {
+	URL string `json:"url"`
+}
+
 func Shorten(c *gin.Context) {
 
 	log.Println("11111111122222223333333")
@@ -49,6 +53,8 @@ func Shorten(c *gin.Context) {
 		//c.JSON(http.StatusCreated, result)
 		c.Data(http.StatusCreated, "application/json", jsonData)
 	}
+
+	db.Close()
 
 	//c.Data(http.StatusCreated, "application/json", jsonData) // Удаляем string(jsonData)
 
