@@ -25,6 +25,7 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible // indirect

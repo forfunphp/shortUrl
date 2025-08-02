@@ -11,6 +11,7 @@ func Redirect(c *gin.Context) {
 	URLPair, ok := URLMap[shortURL]
 
 	filePath := Cfg.EnvFilePath
+
 	logger2, _ := zap.NewDevelopment()
 	defer logger2.Sync()
 	logger2.Info("Request proceju00003",
