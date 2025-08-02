@@ -97,7 +97,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 func ReduceURL(c *gin.Context) {
 
 	if Cfg.Databes != "" {
-		log.Println("99999999999999999999999999999999")
+		log.Println("999999999999999999999999999999199")
 	}
 
 	log.Println("5666666666666")
