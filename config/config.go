@@ -79,6 +79,8 @@ func (c *Config) Init() error {
 			log.Println("22222222223333333333333") // Вывод всей строки
 
 			for rows.Next() {
+				log.Println("2222222222334444444444444")
+
 				values := make([]interface{}, len(columns))
 				scanArgs := make([]interface{}, len(columns))
 				for i := range values {
