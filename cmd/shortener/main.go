@@ -38,6 +38,7 @@ func main() {
 	router.POST("/", WithLogging(handlers.ReduceURL))
 	router.GET("/:shortURL", WithLogging(handlers.Redirect))
 	router.POST("/api/shorten", WithLogging(handlers.Shorten))
+	router.POST("/api/shorten/batch", WithLogging(handlers.Batch))
 	router.GET("/ping", WithLogging(handlers.Ping))
 
 	//_, err := NewPostgresStore(dsn)
