@@ -155,6 +155,8 @@ func loadURLsFromFile(fname string) ([]URLData, error) {
 
 func loadURLsFromDB(db *sql.DB) ([]URLData, error) {
 
+	log.Println("5555555555555h")
+
 	ctx := context.Background()
 
 	rows, err := db.QueryContext(ctx, "SELECT id, shortURL, parsedURL FROM short_urls")
