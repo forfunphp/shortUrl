@@ -7,10 +7,6 @@ import (
 	"net/url"
 )
 
-type ShortenRequest struct {
-	URL string `json:"url"`
-}
-
 type BatchRequestEntry struct {
 	CorrelationID string `json:"correlation_id"`
 	OriginalURL   string `json:"original_url"`
