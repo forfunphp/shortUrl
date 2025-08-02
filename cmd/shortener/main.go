@@ -2,9 +2,9 @@ package main
 
 import (
 	"compress/gzip"
+	"context"
 	"database/sql"
 	"encoding/json"
-
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -154,7 +154,10 @@ func loadURLsFromFile(fname string) ([]URLData, error) {
 }
 
 func loadURLsFromDB(db *sql.DB) ([]URLData, error) {
-	rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
+
+	ctx := context.Background()
+
+	rows, err := db.QueryContext(ctx, "SELECT id, shortURL, parsedURL FROM short_urls")
 	if err != nil {
 		return nil, fmt.Errorf("ошибка при выполнении запроса: %w", err)
 	}
