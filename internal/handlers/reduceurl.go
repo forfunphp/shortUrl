@@ -148,7 +148,7 @@ func ReduceURL(c *gin.Context) {
 				existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
 				if err != nil {
 					log.Printf("Error retrieving existing short URL: %v", err)
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error11"})
 					return
 				}
 
@@ -161,13 +161,13 @@ func ReduceURL(c *gin.Context) {
 			} else {
 				// Handle other PostgreSQL errors
 				log.Printf("PostgreSQL error adding URL: %v", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error22"})
 				return
 			}
 		} else {
 			// Handle non-PostgreSQL errors
 			log.Printf("Error adding URL: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error33"})
 			return
 		}
 	}
