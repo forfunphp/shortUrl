@@ -166,16 +166,9 @@ func ReduceURL(c *gin.Context) {
 			}
 		} else {
 
-			logger7, _ := zap.NewDevelopment()
-			defer logger7.Sync()
-			logger7.Info("Error adding URL",
-				zap.String("url", parsedURL.String()), // Логируем URL
-				zap.Error(err),                        // Логируем ошибку
-			)
-
 			// Handle non-PostgreSQL errors
 			log.Printf("Error adding URL: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error33"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	}
