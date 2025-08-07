@@ -133,10 +133,10 @@ func ReduceURL(c *gin.Context) {
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
-	db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
-	if err != nil {
-		log.Printf("не удалось открыть базу данных: %v", err)
-	}
+	//db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
+	//if err != nil {
+	//	log.Printf("не удалось открыть базу данных: %v", err)
+	//}
 
 	err = insertShortURL(db, shortURL, parsedURL.String())
 
