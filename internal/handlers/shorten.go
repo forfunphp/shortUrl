@@ -36,7 +36,7 @@ func Shorten(c *gin.Context) {
 	var resp ShortURL                            // Инициализируем структуру ShortURL
 	resp.ShortURL = Cfg.BaseURL + "/" + shortURL // Заполняем поле ShortURL
 
-	// Кодируем ответ в JSON
+	// Кодируем ответ в JSONaddURL
 
 	jsonData, err := json.Marshal(resp)
 	if err != nil {

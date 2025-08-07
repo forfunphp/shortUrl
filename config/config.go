@@ -105,10 +105,10 @@ func (c *Config) Init() error {
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
 			_, err = db.Exec(`
-			   CREATE TABLE short_urls (
-				id UUID PRIMARY KEY,
-				shortURL VARCHAR(255) NOT NULL,
-				parsedURL TEXT NOT NULL
+			    CREATE TABLE IF NOT EXISTS short_urls (
+				id SERIAL PRIMARY KEY,
+				shortURL TEXT NOT NULL,
+				parsedURL TEXT NOT NULL UNIQUE
 			   )
 			  `)
 			if err != nil {

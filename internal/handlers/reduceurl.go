@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 	"go.uber.org/zap"
 	"io"
 	"log"
@@ -85,13 +87,22 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	}()
 
-	id := uuid.New()
-	_, err = tx.ExecContext(ctx, "INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", id, shortURL, parsedURL)
+	id := uuid.New() // Генерируем UUID
+
+	_, err = db.ExecContext(ctx, `
+		INSERT INTO short_urls (id, shortURL, parsedURL)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (parsedURL) DO NOTHING
+	`, id, shortURL, parsedURL)
+
 	if err != nil {
 		return err
 	}
-
 	return nil
+}
+
+type ShortenResponse struct {
+	Result interface{}
 }
 
 func ReduceURL(c *gin.Context) {
@@ -127,7 +138,39 @@ func ReduceURL(c *gin.Context) {
 		log.Printf("не удалось открыть базу данных: %v", err)
 	}
 
-	insertShortURL(db, shortURL, parsedURL.String())
+	err = insertShortURL(db, shortURL, parsedURL.String())
+
+	if err != nil {
+		if pgErr, ok := err.(*pq.Error); ok {
+			if pgErr.Code == pgerrcode.UniqueViolation {
+
+				// Handle unique violation (409 Conflict)
+				existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
+				if err != nil {
+					log.Printf("Error retrieving existing short URL: %v", err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+					return
+				}
+
+				//Respond with Conflict and JSON
+				response := ShortenResponse{Result: Cfg.BaseURL + "/" + existingShortURL}
+				c.JSON(http.StatusConflict, response) // Correct response
+
+				return
+
+			} else {
+				// Handle other PostgreSQL errors
+				log.Printf("PostgreSQL error adding URL: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+				return
+			}
+		} else {
+			// Handle non-PostgreSQL errors
+			log.Printf("Error adding URL: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+	}
 
 	//if Cfg.Databes != "" {
 
@@ -157,6 +200,15 @@ func ReduceURL(c *gin.Context) {
 		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
+}
+
+func getExistingShortURL(ctx context.Context, parsedURL string) (string, error) {
+	var shortURL string
+	err := db.QueryRowContext(ctx, "SELECT shortURL FROM short_urls WHERE parsedURL = $1", parsedURL).Scan(&shortURL)
+	if err != nil {
+		return "", err
+	}
+	return shortURL, nil
 }
 
 func saveURLsToFile(urls []URLData, fname string) error {
