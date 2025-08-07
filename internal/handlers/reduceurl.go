@@ -168,9 +168,9 @@ func ReduceURL(c *gin.Context) {
 
 			logger7, _ := zap.NewDevelopment()
 			defer logger7.Sync()
-			logger7.Info("Error adding",
-				zap.String("fullURL", err), // Добавляем полный URL
-
+			logger7.Info("Error adding URL",
+				zap.String("url", parsedURL.String()), // Логируем URL
+				zap.Error(err),                        // Логируем ошибку
 			)
 
 			// Handle non-PostgreSQL errors
