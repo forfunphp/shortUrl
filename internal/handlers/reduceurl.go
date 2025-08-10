@@ -62,7 +62,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 	if err != nil {
 		log.Println("0340040440")
 		log.Printf("database connection is not o:")
-		return fmt.Errorf("database connection is not open: %w", err)
+		return fmt.Errorf("database connection is not open2452: %w", err)
 
 	}
 
@@ -152,10 +152,10 @@ func ReduceURL(c *gin.Context) {
 	//if err != nil {
 	//	log.Printf("не удалось открыть базу данных: %v", err)
 	//}
-	db, err := sql.Open("postgres", Cfg.Databes)
-	if err == nil { // Add this check!
-		log.Println("Соединение с базой данных не было установлено!")
-	}
+	//db, err := sql.Open("postgres", Cfg.Databes)
+	//if err == nil { // Add this check!
+	//	log.Println("Соединение с базой данных не было установлено!")
+	//}
 
 	err = insertShortURL(db, shortURL, parsedURL.String())
 
