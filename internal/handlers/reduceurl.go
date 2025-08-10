@@ -62,7 +62,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 		log.Println("Соединение с базой данных не было установлено!")
 	}
 
-	err = db.Ping()
+	err := db.Ping()
 	if err != nil {
 		log.Println("0340040440")
 		log.Printf("database connection is not o:")
