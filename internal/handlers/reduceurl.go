@@ -56,6 +56,12 @@ func init() {
 
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
+	err := db.Ping()
+	if err != nil {
+		log.Printf("database connection is not o:")
+		return fmt.Errorf("database connection is not open: %w", err)
+
+	}
 
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
