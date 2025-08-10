@@ -16,15 +16,12 @@ type Config struct {
 	BaseURL     string
 	EnvFilePath string
 	Databes     string
+	DB          *sql.DB
 }
 
 func NewConfig() *Config {
 	return &Config{}
 }
-
-var (
-	DB *sql.DB // Global variable (use with caution, see recommendations below)
-)
 
 func (c *Config) Init() error {
 

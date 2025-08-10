@@ -54,11 +54,11 @@ func init() {
 	}
 }
 
-func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
+func insertShortURL(DB *sql.DB, shortURL string, parsedURL string) error {
 
 	log.Println("15161616166")
 
-	err := db.Ping()
+	err := DB.Ping()
 	if err != nil {
 		log.Println("0340040440")
 		log.Printf("database connection is not o:")
@@ -69,7 +69,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 	log.Println("1515115788444")
 
 	ctx := context.Background()
-	tx, err := db.BeginTx(ctx, nil)
+	tx, err := DB.BeginTx(ctx, nil)
 	if err != nil {
 		log.Fatalf("Ошибка при начале транза7кции: %v", err)
 		return err
@@ -104,7 +104,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	id := uuid.New() // Генерируем UUID
 
-	_, err = db.ExecContext(ctx, `
+	_, err = DB.ExecContext(ctx, `
 		INSERT INTO short_urls (id, shortURL, parsedURL)
 		VALUES ($1, $2, $3)
 		ON CONFLICT (parsedURL) DO NOTHING
@@ -157,7 +157,7 @@ func ReduceURL(c *gin.Context) {
 	//	log.Println("Соединение с базой данных не было установлено!")
 	//}
 
-	err = insertShortURL(db, shortURL, parsedURL.String())
+	err = insertShortURL(Cfg.DB, shortURL, parsedURL.String())
 
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok {
