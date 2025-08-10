@@ -58,7 +58,15 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	log.Println("15161616166")
 
-	err := db.Ping()
+	db, err := sql.Open("driverName", "dataSourceName")
+	if err != nil {
+		log.Println("Ошибка при открытии соединения с базой данных: %v", err)
+	}
+	if db == nil { // Add this check!
+		log.Println("Соединение с базой данных не было установлено!")
+	}
+
+	err = db.Ping()
 	if err != nil {
 		log.Println("0340040440")
 		log.Printf("database connection is not o:")
