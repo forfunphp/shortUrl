@@ -22,6 +22,10 @@ func NewConfig() *Config {
 	return &Config{}
 }
 
+var (
+	DB *sql.DB // Global variable (use with caution, see recommendations below)
+)
+
 func (c *Config) Init() error {
 
 	c.HTTPAddr = os.Getenv("SERVER_ADDRESS")
@@ -43,13 +47,13 @@ func (c *Config) Init() error {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
 		log.Println("3333333333333133332")
 
-		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
+		DB, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
 			log.Printf("не удалось открыть базу данных: %v", err)
 		}
 
 		var tableExists bool
-		err = db.QueryRow(`
+		err = DB.QueryRow(`
 		  SELECT EXISTS (
 		   SELECT 1
 		   FROM   pg_catalog.pg_tables
@@ -63,7 +67,7 @@ func (c *Config) Init() error {
 
 		if tableExists {
 
-			rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
+			rows, err := DB.Query("SELECT id, shortURL, parsedURL FROM short_urls")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -104,7 +108,7 @@ func (c *Config) Init() error {
 			log.Println("Table 'short_urls' already exists1")
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
-			_, err = db.Exec(`
+			_, err = DB.Exec(`
 			    CREATE TABLE IF NOT EXISTS short_urls (
 				id SERIAL PRIMARY KEY,
 				shortURL TEXT NOT NULL,

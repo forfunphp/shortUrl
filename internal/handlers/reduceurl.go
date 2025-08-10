@@ -58,10 +58,6 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	log.Println("15161616166")
 
-	db, err := sql.Open("driverName", "dataSourceName")
-	if err != nil {
-		log.Println("Ошибка при открытии соединения с базой данных: %v", err)
-	}
 	if db == nil { // Add this check!
 		log.Println("Соединение с базой данных не было установлено!")
 	}
@@ -161,7 +157,7 @@ func ReduceURL(c *gin.Context) {
 	//	log.Printf("не удалось открыть базу данных: %v", err)
 	//}
 
-	err = insertShortURL(db, shortURL, parsedURL.String())
+	err = insertShortURL(config.DB, shortURL, parsedURL.String())
 
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok {
