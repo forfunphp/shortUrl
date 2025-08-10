@@ -16,7 +16,6 @@ type Config struct {
 	BaseURL     string
 	EnvFilePath string
 	Databes     string
-	DB          *sql.DB
 }
 
 func NewConfig() *Config {
@@ -44,13 +43,13 @@ func (c *Config) Init() error {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
 		log.Println("333333333333313d3332")
 
-		DB, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
+		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
 			log.Printf("не удалось открыть базу данных: %v", err)
 		}
 
 		var tableExists bool
-		err = DB.QueryRow(`
+		err = db.QueryRow(`
 		  SELECT EXISTS (
 		   SELECT 1
 		   FROM   pg_catalog.pg_tables
@@ -64,7 +63,7 @@ func (c *Config) Init() error {
 
 		if tableExists {
 
-			rows, err := DB.Query("SELECT id, shortURL, parsedURL FROM short_urls")
+			rows, err := db.Query("SELECT id, shortURL, parsedURL FROM short_urls")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -105,7 +104,7 @@ func (c *Config) Init() error {
 			log.Println("Table 'short_urls' already exists1")
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
-			_, err = DB.Exec(`
+			_, err = db.Exec(`
 			    CREATE TABLE IF NOT EXISTS short_urls (
 				id SERIAL PRIMARY KEY,
 				shortURL TEXT NOT NULL,
