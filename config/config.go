@@ -41,7 +41,7 @@ func (c *Config) Init() error {
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-		log.Println("333333333333313d3332")
+		log.Println("3333333333333133332")
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
@@ -105,10 +105,10 @@ func (c *Config) Init() error {
 		} else {
 			log.Println("Table 'short_urls' does not exist, creating it")
 			_, err = db.Exec(`
-			    CREATE TABLE IF NOT EXISTS short_urls (
-				id SERIAL PRIMARY KEY,
-				shortURL TEXT NOT NULL,
-				parsedURL TEXT NOT NULL UNIQUE
+			   CREATE TABLE short_urls (
+				id UUID PRIMARY KEY,
+				shortURL VARCHAR(255) NOT NULL,
+				parsedURL TEXT NOT NULL
 			   )
 			  `)
 			if err != nil {
