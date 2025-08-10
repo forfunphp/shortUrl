@@ -162,7 +162,7 @@ func ReduceURL(c *gin.Context) {
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok {
 			if pgErr.Code == pgerrcode.UniqueViolation {
-				log.Println("9999999999999999999999")
+				log.Println("99999999999999d99999999")
 
 				// Handle unique violation (409 Conflict)
 				existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
