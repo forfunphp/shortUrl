@@ -71,7 +71,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		log.Fatalf("Ошибка при начале транзакции: %v", err)
+		log.Fatalf("Ошибка при начале транза7кции: %v", err)
 		return err
 	}
 	defer func() {
