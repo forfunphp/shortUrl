@@ -122,17 +122,6 @@ type ShortenResponse struct {
 
 func ReduceURL(c *gin.Context) {
 
-	if Cfg.Databes != "" {
-		log.Println("999999999999999999999999999999199")
-	}
-
-	err := db.Ping()
-	if err != nil {
-		log.Println("0340040440")
-		log.Printf("database connection is not o:")
-
-	}
-
 	log.Println("5666666666666")
 
 	body, err := readRequestBody(c)
@@ -164,41 +153,53 @@ func ReduceURL(c *gin.Context) {
 	//	log.Println("Соединение с базой данных не было установлено!")
 	//}
 
-	err = insertShortURL(db, shortURL, parsedURL.String())
-
+	err = db.Ping()
 	if err != nil {
-		if pgErr, ok := err.(*pq.Error); ok {
-			if pgErr.Code == pgerrcode.UniqueViolation {
-				log.Println("99999999999999d99999999")
+		log.Println("0340040440")
+		log.Printf("database connection is not o:")
 
-				// Handle unique violation (409 Conflict)
-				existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
-				if err != nil {
-					log.Printf("Error retrieving existing short URL: %v", err)
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error11"})
+	}
+
+	if Cfg.Databes != "" {
+
+		err = insertShortURL(db, shortURL, parsedURL.String())
+
+		if err != nil {
+			if pgErr, ok := err.(*pq.Error); ok {
+				if pgErr.Code == pgerrcode.UniqueViolation {
+					log.Println("99999999999999d99999999")
+
+					// Handle unique violation (409 Conflict)
+					existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
+					if err != nil {
+						log.Printf("Error retrieving existing short URL: %v", err)
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error11"})
+						return
+					}
+
+					//Respond with Conflict and JSON
+					response := ShortenResponse{Result: Cfg.BaseURL + "/" + existingShortURL}
+					c.JSON(http.StatusConflict, response) // Correct response
+
+					return
+
+				} else {
+					// Handle other PostgreSQL errors
+					log.Printf("PostgreSQL error adding URL: %v", err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error22"})
 					return
 				}
-
-				//Respond with Conflict and JSON
-				response := ShortenResponse{Result: Cfg.BaseURL + "/" + existingShortURL}
-				c.JSON(http.StatusConflict, response) // Correct response
-
-				return
-
 			} else {
-				// Handle other PostgreSQL errors
-				log.Printf("PostgreSQL error adding URL: %v", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error22"})
+				log.Println("7777777777777777777")
+
+				// Handle non-PostgreSQL errors
+				log.Printf("Error adding URL: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error11": err.Error()})
 				return
 			}
-		} else {
-			log.Println("7777777777777777777")
-
-			// Handle non-PostgreSQL errors
-			log.Printf("Error adding URL: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error11": err.Error()})
-			return
 		}
+
+		log.Println("999999999999999999999999999999199")
 	}
 
 	//if Cfg.Databes != "" {
