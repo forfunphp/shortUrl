@@ -153,14 +153,14 @@ func ReduceURL(c *gin.Context) {
 	//	log.Println("Соединение с базой данных не было установлено!")
 	//}
 
-	err = db.Ping()
-	if err != nil {
-		log.Println("0340040440")
-		log.Printf("database connection is not o:")
-
-	}
-
 	if Cfg.Databes != "" {
+
+		err = db.Ping()
+		if err != nil {
+			log.Println("0340040440")
+			log.Printf("database connection is not o:")
+
+		}
 
 		err = insertShortURL(db, shortURL, parsedURL.String())
 
