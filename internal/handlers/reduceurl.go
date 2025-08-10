@@ -55,6 +55,8 @@ func init() {
 }
 
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
+
+
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
@@ -71,6 +73,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 		} else if err != nil {
 			// Ошибка! Откатываем транзакцию
 			log.Printf("Ошибка! Откат транзакции: %v", err)
+
 			if err := tx.Rollback(); err != nil {
 				log.Printf("Ошибка при откате транзакции: %v", err)
 			}
@@ -168,7 +171,7 @@ func ReduceURL(c *gin.Context) {
 
 			// Handle non-PostgreSQL errors
 			log.Printf("Error adding URL: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error11": err.Error()})
 			return
 		}
 	}
