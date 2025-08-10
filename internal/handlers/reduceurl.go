@@ -153,7 +153,7 @@ func ReduceURL(c *gin.Context) {
 	//	log.Printf("не удалось открыть базу данных: %v", err)
 	//}
 	db, err := sql.Open("postgres", Cfg.Databes)
-	if db == nil { // Add this check!
+	if err == nil { // Add this check!
 		log.Println("Соединение с базой данных не было установлено!")
 	}
 
