@@ -71,6 +71,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
+		log.Fatalf("Ошибка при начале транзакции: %v", err)
 		return err
 	}
 	defer func() {
@@ -80,7 +81,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 			if err := tx.Rollback(); err != nil {
 				log.Printf("Ошибка при откате транзакции: %v", err)
 			}
-			panic(p) // Перебрасываем панику дальше
+			//panic(p) // Перебрасываем панику дальше
 		} else if err != nil {
 			// Ошибка! Откатываем транзакцию
 			log.Printf("Ошибка! Откат транзакции: %v", err)
