@@ -56,18 +56,6 @@ func init() {
 
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
-	log.Println("15161616166")
-
-	err := db.Ping()
-	if err != nil {
-		log.Println("0340040440")
-		log.Printf("database connection is not o:")
-		return fmt.Errorf("database connection is not open2452: %w", err)
-
-	}
-
-	log.Println("1515115788444")
-
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
@@ -81,7 +69,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 			if err := tx.Rollback(); err != nil {
 				log.Printf("Ошибка при откате транзакции: %v", err)
 			}
-			//panic(p) // Перебрасываем панику дальше
+			panic(p) // Перебрасываем панику дальше
 		} else if err != nil {
 			// Ошибка! Откатываем транзакцию
 			log.Printf("Ошибка! Откат транзакции: %v", err)
@@ -102,13 +90,17 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	}()
 
-	id := uuid.New() // Генерируем UUID
+	id := uuid.New()
+	_, err = tx.ExecContext(ctx, "INSERT INTO short_urls (id, shortURL, parsedURL) VALUES ($1, $2, $3)", id, shortURL, parsedURL)
+	if err != nil {
+		return err
+	}
 
-	_, err = db.ExecContext(ctx, `
-		INSERT INTO short_urls (id, shortURL, parsedURL)
-		VALUES ($1, $2, $3)
-		ON CONFLICT (parsedURL) DO NOTHING
-	`, id, shortURL, parsedURL)
+	//_, err = db.ExecContext(ctx, `
+	//	INSERT INTO short_urls (id, shortURL, parsedURL)
+	//	VALUES ($1, $2, $3)
+	//	ON CONFLICT (parsedURL) DO NOTHING
+	//`, id, shortURL, parsedURL)
 
 	if err != nil {
 		return err
@@ -143,15 +135,6 @@ func ReduceURL(c *gin.Context) {
 	fmt.Printf("Парсированный URL: %s\n", parsedURL.String())
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
-
-	//db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
-	//if err != nil {
-	//	log.Printf("не удалось открыть базу данных: %v", err)
-	//}
-	//db, err := sql.Open("postgres", Cfg.Databes)
-	//if err == nil { // Add this check!
-	//	log.Println("Соединение с базой данных не было установлено!")
-	//}
 
 	if Cfg.Databes != "" {
 
