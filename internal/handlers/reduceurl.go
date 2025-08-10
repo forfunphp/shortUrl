@@ -57,7 +57,7 @@ func init() {
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
 	log.Println("15161616166")
-
+	db, err := sql.Open("postgres", Cfg.Databes)
 	if db == nil { // Add this check!
 		log.Println("Соединение с базой данных не было установлено!")
 	}
