@@ -56,12 +56,17 @@ func init() {
 
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 
+	log.Println("15161616166")
+
 	err := db.Ping()
 	if err != nil {
+		log.Println("0340040440")
 		log.Printf("database connection is not o:")
 		return fmt.Errorf("database connection is not open: %w", err)
 
 	}
+
+	log.Println("1515115788444")
 
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
@@ -152,6 +157,7 @@ func ReduceURL(c *gin.Context) {
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok {
 			if pgErr.Code == pgerrcode.UniqueViolation {
+				log.Println("9999999999999999999999")
 
 				// Handle unique violation (409 Conflict)
 				existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
@@ -174,6 +180,7 @@ func ReduceURL(c *gin.Context) {
 				return
 			}
 		} else {
+			log.Println("7777777777777777777")
 
 			// Handle non-PostgreSQL errors
 			log.Printf("Error adding URL: %v", err)
