@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 	"go.uber.org/zap"
 	"io"
 	"log"
@@ -53,9 +55,11 @@ func init() {
 }
 
 func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
+
 	ctx := context.Background()
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
+		log.Fatalf("Ошибка при начале транза7кции: %v", err)
 		return err
 	}
 	defer func() {
@@ -69,6 +73,7 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 		} else if err != nil {
 			// Ошибка! Откатываем транзакцию
 			log.Printf("Ошибка! Откат транзакции: %v", err)
+
 			if err := tx.Rollback(); err != nil {
 				log.Printf("Ошибка при откате транзакции: %v", err)
 			}
@@ -91,14 +96,23 @@ func insertShortURL(db *sql.DB, shortURL string, parsedURL string) error {
 		return err
 	}
 
+	//_, err = db.ExecContext(ctx, `
+	//	INSERT INTO short_urls (id, shortURL, parsedURL)
+	//	VALUES ($1, $2, $3)
+	//	ON CONFLICT (parsedURL) DO NOTHING
+	//`, id, shortURL, parsedURL)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func ReduceURL(c *gin.Context) {
+type ShortenResponse struct {
+	Result interface{}
+}
 
-	if Cfg.Databes != "" {
-		log.Println("999999999999999999999999999999199")
-	}
+func ReduceURL(c *gin.Context) {
 
 	log.Println("5666666666666")
 
@@ -122,12 +136,56 @@ func ReduceURL(c *gin.Context) {
 
 	URLMap[shortURL] = URLPair{parsedURL, shortURL}
 
-	db, err := sql.Open("postgres", Cfg.Databes) // Замените "postgres" именем вашего драйвера
-	if err != nil {
-		log.Printf("не удалось открыть базу данных: %v", err)
-	}
+	if Cfg.Databes != "" {
 
-	insertShortURL(db, shortURL, parsedURL.String())
+		err = db.Ping()
+		if err != nil {
+			log.Println("0340040440")
+			log.Printf("database connection is not o:")
+
+		}
+
+		err = insertShortURL(db, shortURL, parsedURL.String())
+
+		log.Println("insertShortURLinsertShortURL")
+
+		if err != nil {
+			if pgErr, ok := err.(*pq.Error); ok {
+				if pgErr.Code == pgerrcode.UniqueViolation {
+					log.Println("9999999999999uud99999999")
+
+					// Handle unique violation (409 Conflict)
+					existingShortURL, err := getExistingShortURL(c.Request.Context(), parsedURL.String())
+					if err != nil {
+						log.Printf("Error retrieving existing short URL: %v", err)
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error11"})
+						return
+					}
+
+					//Respond with Conflict and JSON
+					response := ShortenResponse{Result: Cfg.BaseURL + "/" + existingShortURL}
+					c.JSON(http.StatusConflict, response) // Correct response
+
+					return
+
+				} else {
+					// Handle other PostgreSQL errors
+					log.Printf("PostgreSQL error adding URL: %v", err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error22"})
+					return
+				}
+			} else {
+				log.Println("7777777777777777777")
+
+				// Handle non-PostgreSQL errors
+				log.Printf("Error adding URL: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error11": err.Error()})
+				return
+			}
+		}
+
+		log.Println("999999999999999999999999999999199")
+	}
 
 	//if Cfg.Databes != "" {
 
@@ -157,6 +215,15 @@ func ReduceURL(c *gin.Context) {
 		c.Data(http.StatusCreated, "application/x-gzip", []byte(Cfg.BaseURL+"/"+shortURL))
 	}
 
+}
+
+func getExistingShortURL(ctx context.Context, parsedURL string) (string, error) {
+	var shortURL string
+	err := db.QueryRowContext(ctx, "SELECT shortURL FROM short_urls WHERE parsedURL = $1", parsedURL).Scan(&shortURL)
+	if err != nil {
+		return "", err
+	}
+	return shortURL, nil
 }
 
 func saveURLsToFile(urls []URLData, fname string) error {

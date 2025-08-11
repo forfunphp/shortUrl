@@ -41,7 +41,7 @@ func (c *Config) Init() error {
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-		log.Println("3333333333333133332")
+		log.Println("333333333333313u3332")
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
@@ -116,7 +116,7 @@ func (c *Config) Init() error {
 			}
 		}
 
-		fmt.Println("Подключение к базе данных успешно!")
+		fmt.Println("Подключение к базе данных успешно!111")
 	} else {
 		log.Println(c.Databes)
 		log.Println(c.EnvFilePath)
