@@ -147,6 +147,8 @@ func ReduceURL(c *gin.Context) {
 
 		err = insertShortURL(db, shortURL, parsedURL.String())
 
+		log.Println("insertShortURLinsertShortURL")
+
 		if err != nil {
 			if pgErr, ok := err.(*pq.Error); ok {
 				if pgErr.Code == pgerrcode.UniqueViolation {

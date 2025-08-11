@@ -116,7 +116,7 @@ func (c *Config) Init() error {
 			}
 		}
 
-		fmt.Println("Подключение к базе данных успешно!")
+		fmt.Println("Подключение к базе данных успешно!111")
 	} else {
 		log.Println(c.Databes)
 		log.Println(c.EnvFilePath)
