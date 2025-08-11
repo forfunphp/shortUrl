@@ -41,7 +41,7 @@ func (c *Config) Init() error {
 
 	if c.Databes != "" {
 		//	c.Databes = os.Getenv("DATABASE_DSN")
-88		log.Println("333333333333313u3332")
+		log.Println("333333333333313u3332")
 
 		db, err := sql.Open("postgres", c.Databes) // Замените "postgres" именем вашего драйвера
 		if err != nil {
